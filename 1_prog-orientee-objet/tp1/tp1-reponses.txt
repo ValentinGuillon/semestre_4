@@ -1,0 +1,4 @@
+
+Exercice 4.1:
+    Le code ne compilera pas car l'attribut "x" du "Point a" est en "private"
+

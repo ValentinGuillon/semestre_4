@@ -3,7 +3,7 @@
 using namespace std;
 
 struct Point {
-    private:
+    private :
         float x;
         float y;
     public:
@@ -21,13 +21,20 @@ struct Point {
             x=-y;
             y=tmp;
         }
+
+        void translate(Point a) {
+            x += a.x;
+            y += a.y;
+        }
 };
 
-
-int main(void) {
+int main() {
     Point p(4,5);
     Point c(-4,1);
     c.affichePoint();
     c.rotate();
     c.affichePoint();
+    c.translate(p);
+    c.affichePoint();
 }
+

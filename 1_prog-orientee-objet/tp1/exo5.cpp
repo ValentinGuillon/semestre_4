@@ -3,7 +3,7 @@
 using namespace std;
 
 struct Point {
-    private:
+    private :
         float x;
         float y;
     public:
@@ -12,17 +12,23 @@ struct Point {
             y=py;
         }
 
-        void affichePoint() {
+        void affichePoint(void) {
             cout << "(" << x << "," << y << ")" << endl;
         }
 
-        void rotate() { // effectue une rotation de +90 d. ayant pour centre le point (0,0)
+        void rotate(void) { // effectue une rotation de +90 d. ayant pour centre le point (0,0)
             float tmp=x;
             x=-y;
             y=tmp;
         }
-};
 
+        Point barycentre(Point a) {
+            Point r{0, 0};
+            r.x = (x + a.x) / 2;
+            r.y = (y + a.y) / 2;
+            return r;
+        }
+};
 
 int main(void) {
     Point p(4,5);
@@ -30,4 +36,7 @@ int main(void) {
     c.affichePoint();
     c.rotate();
     c.affichePoint();
+    Point a = c.barycentre(p);
+    a.affichePoint();
 }
+
