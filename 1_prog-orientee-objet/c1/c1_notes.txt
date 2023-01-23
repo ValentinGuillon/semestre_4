@@ -1,0 +1,11 @@
+
+c   |    c++
+fichier.c   |    fichier.cpp
+entete.h   |    entete.hpp
+#include<stdio.h>   |    #include<cstdio>
+gcc ...    |    g++...
+struct mastruct {...}; struct mastruct a;   |    strcut mastruct {...} mastruct a;
+
+
+
+
