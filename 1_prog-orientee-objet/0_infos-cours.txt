@@ -1,3 +1,6 @@
+language:
+    C++
+
 site du cours :
     https://defelice.up8.site/poo.html
 mail:
