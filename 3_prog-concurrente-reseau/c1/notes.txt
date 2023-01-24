@@ -1,0 +1,18 @@
+
+Chap 1: Arith, application en cryptographie
+
+un nombre à n chiffres est entre base^(n-1) et (base^n) - 1
+ex: nb base dix à 4 chiffres, entre 1000 et 9999
+
+
+base 10 -> 2 => division successive
+
+base 2 -> 10 => somme des ... bref
+
+base 2 -> 16 => les paquets de 4 bits là (1101 => D)
+base 16 -> 2 => pareils mais l'inverse quoi !! on met bien les 4 bits (5 => 0101)
+
+
+
+
+
