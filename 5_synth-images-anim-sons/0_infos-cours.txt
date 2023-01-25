@@ -1,0 +1,16 @@
+Synthèse d'images, animation, et sons
+
+langage:
+    C
+
+prof:
+    Farès Belhadj
+
+cours:
+    https://expreg.org/ansi
+    -> enseignements
+    -> S.I.A.S S2 22-23
+
+moodle: (clé: SIAS2223S2-X)
+    https://moodle.univ-paris8.fr/course/view.php?id=14485
+

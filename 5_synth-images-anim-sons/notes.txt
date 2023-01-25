@@ -1,0 +1,15 @@
+projet: -> rendu 10 mai
+    animation alliant sons et animations
+    mettre un générique de crédits
+
+langage:
+    C
+biblio:
+    GL4D (OpenGL pour les noobs)
+    GLSL (OpenGL Shading language) (semblable au C)
+
+TTF: True Type Font
+
+biblio en plus à installer (si on veux aller plus loin):
+    Lib assimp -> permet de charger tous les formats de modèles 3D
+
