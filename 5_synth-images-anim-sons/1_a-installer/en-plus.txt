@@ -1,0 +1,5 @@
+Suivre les recommandations de la documentation fournie sans oublier d'installer : 
+sdl2_mixer (ou libsdl2-mixer-dev) ; 
+sdl2_image (ou libsdl2-image-dev) ; 
+sdl2_ttf (ou libsdl2-ttf-dev).
+
