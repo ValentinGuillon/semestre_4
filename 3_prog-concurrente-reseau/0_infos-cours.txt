@@ -1,8 +1,14 @@
+Programmation concurrente et réseaux
+(Mathématiques pour l'informatique, en vrai)
 
+langage:
+    python
+
+prof:
+    Benjamin Dupont
 mail:
     benjamin.dupont02@univ-paris8.fr
+
 moodle: (clé: PrograRéseau)
     https://moodle.univ-paris8.fr/course/view.php?id=19010
-Mattermost:
-    L2X-Y Mathématiques pour l'Informatiques
 

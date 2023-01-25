@@ -1,10 +1,10 @@
-cours:
-    Systèmes et réseaux
+Systèmes et réseaux
+
 prof:
     Oumaima El Joubari
-
 mail:
     eljoubari.oum@gmail.com
+
 support:
     discord
 

@@ -1,10 +1,13 @@
+Programmation orientée objet
+
 language:
     C++
 
-site du cours :
-    https://defelice.up8.site/poo.html
+prof:
+    Sven De Félice
 mail:
     sdefelice@up8.site
-bureau:
-    A178
+
+site du cours :
+    https://defelice.up8.site/poo.html
 
