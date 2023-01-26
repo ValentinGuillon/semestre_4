@@ -26,7 +26,7 @@ def base_10_to_b(n:int, base:int) -> int:
 
     while (base_2):
         base_b += ((base_2 % 10) * base) * math.pow(10, digit)
-        base_2 /= 10
+        base_2 //= 10
         digit += 1
 
     return int(base_2)
