@@ -1,0 +1,14 @@
+Algorithmes et structure de données 2
+
+Langage:
+    C
+
+Prof:
+    Alice MILLOUR
+
+Mail:
+    am@up8.edu
+
+Moodle: (clé: ...)
+    zoejvls
+
