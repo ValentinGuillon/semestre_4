@@ -1,0 +1,11 @@
+
+2) Fonctionnement des réseaux
+g. Modèles en couches
+    7 App     }
+    6 Prés    } données (datagramme)
+    5 Session } 
+    4 Transport | en tete (TCP/UDP) | données |         segment
+    3 Réseau    | en tete (IP) | en tete (TCP/UDP) | données |   paquets
+    2 Liaison   | en tete (MAC) | en tete (IP) | en tete (TCP/UDP) | données |   trame
+    1 Physique  série binaire
+

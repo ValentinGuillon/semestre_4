@@ -38,5 +38,18 @@ Exo 6:
 Exo 7:
     1. bus, ...?
     
+    2. ditance max possible entre 2 PC ~=58 m (hypoténuse de 30x50)
+    
+    T = Q / D
+    T = 10Mb / (distance / vitesse)
+    T = 10 Mb / (0.058km / 200000)
+    
+    
+    Tpropag = distance / (vitesse propag (lumière - bruit))
+    
+    Ttrans = Q / D
+    T      = 64o * 8 (bits) / 10^7 (10Mb)
+    
+    
 
 

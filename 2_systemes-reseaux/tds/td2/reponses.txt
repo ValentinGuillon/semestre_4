@@ -1,0 +1,21 @@
+Exo 1:
+    a) Liaison des données (2)
+    b) les paquets encapsules les trames. les paquets prépare l'envoie des trames, donc il faut ajouter les en tete pour le transport
+    c) (ptdr je sais pas) si la commutation des paquets n'est pas faites, les données reçues ne seront pas complètent (non)
+        les messages sont données en entier, alors que les paquets sont des morceaux de données, qui sont regroupés à la fin
+
+Exo 2:
+    1. B
+    2. A
+    3. D
+    4. D
+    5. B 30
+    6. A, B, C
+
+Exo 3:
+    1. ajouter un en tete
+    2. M + (N*H). fraction de la bande passante ?
+
+Exo 4:
+    
+
