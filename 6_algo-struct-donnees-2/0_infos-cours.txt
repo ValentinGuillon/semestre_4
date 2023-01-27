@@ -9,6 +9,5 @@ Prof:
 Mail:
     am@up8.edu
 
-Moodle: (clé: ...)
-    zoejvls
-
+Moodle: (clé: ALGODONNES)
+    https://moodle.univ-paris8.fr/course/view.php?id=18941
