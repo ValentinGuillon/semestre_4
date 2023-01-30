@@ -1,0 +1,123 @@
+chap 2: destructeur, surcharge, fichiiers séparée
+
+CLASS                 | STRUCT
+
+class Point {         | struct Point {
+//default = private   | //default = public
+};                    | };
+
+
+this: (type == class_name*)
+    c'est comme le self ptdr (pas besoin de la mentionner dans les arg d'une méthode)
+    
+
+
+
+
+
+class Frac_t {
+    int n, d;
+    public:
+        frac_t (int n, int d) //constructeur
+        (*this).n = n;
+        this->d = d;
+};
+
+
+Destructeur:
+    est une méthode d'objet appelé lors de la fin de vie de celui-ci
+
+
+class maClasse_t {
+    ...
+    public:
+    maClasse_t(...){} //constructeur
+    ~maClass_t(void){} // destructeur
+};
+
+
+int main(void){
+    maClasse_t a; //appel constructeur
+    maClasse_t b; //appel constructeur
+
+    {
+        macClasse_t c; // //appel constructeur
+    } //appel destructeur pour c
+} //appel destructeur pour b, puis a (parceque pile)
+
+
+
+
+surcharge de fonctions:
+
+en c++ on définie plusieurs fonctions possédant le méme identifiant à la condition que les "signatures" de ces fonctions soient différentes.
+La signature d'une fonction est: "son identifiant et la suite des types des paramètres de la fonctions"?
+
+ex:
+void f(int a){...}
+void f(double a){...}
+void f(void){...}
+
+
+int main(void) {
+    f(3); //appel la 1ère
+    f(); //appel la 3ème
+    f(1.7); // appel à 2ème
+}
+
+
+
+contre ex:
+int g(int a){...}
+void g(int a) {...}
+//ERROR, les deux g ont la même signature
+
+
+Lorsqu'une fonction est surchargée, lors d'un appel, le compilateur choisis la fonction qui correspond à l'identifiant et au type des arguments.
+S'il n'y a pas de correspondance, le compilateur tente des conversions, s'il y a plusieurs choix possible, error
+
+ex:
+void h(int a) {...}
+void t(long a) {...}
+void t(int a) {...}
+
+int main(void) {
+    h(3); //appel h avec 3
+    h(3.1); //appel h en convertissant double -> int
+    t(3); // appel 2éme t avec 3
+    t(3.1); //error
+
+
+
+valeurs par défaut:
+comme en python (toutes à droites)
+ex: int f(int a, int b, int c=4)
+
+
+
+compilation de classe séparée: (classe pas dans le fichier exécuté)
+les "membres" d"une classe peuvent être definit "à l'int"rieur" des accollades de la classe, ou à l'extérieur
+
+
+
+
+
+en gros, on peut définir la classe, soit dans le .hpp, soit dans la fichier lib.cpp
+
+inté:
+hpp                           | lib.cpp
+
+int maclass {                 |
+    int a, b;                 | vide
+    public method(...){...};  |
+}                             |
+
+exté:
+
+int maclass {                 | #include "fichier.hpp"
+    int a, b;                 | 
+    public method(...);       | void maclass::method(...) {
+}                             |     ...
+                              | }
+
+
