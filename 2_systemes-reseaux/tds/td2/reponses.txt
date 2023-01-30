@@ -14,8 +14,9 @@ Exo 2:
 
 Exo 3:
     1. ajouter un en tete
-    2. M + (N*H). fraction de la bande passante ?
+    2. M + (N*H). fraction de la bande passante ? (réponse (N*H) / (M + (N*H))
 
 Exo 4:
+
     
 
