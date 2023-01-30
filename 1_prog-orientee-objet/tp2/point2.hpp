@@ -1,7 +1,7 @@
 
 
-#ifndef ALED
-#define ALED
+#ifndef USELESS
+#define USELESS
 
 
 class point2_t {

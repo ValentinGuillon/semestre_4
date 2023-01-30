@@ -1,5 +1,8 @@
 
-#include<string>
+using namespace std;
+
+#ifndef USELESS
+#define USELESS
 
 
 class personne_t {
@@ -17,3 +20,5 @@ class personne_t {
         string affiche(void);
 };
 
+
+#endif

@@ -1,5 +1,5 @@
 
-COURS = [POO]
+COURS = POO
 TP = TP2
 NAME = Valentin-GUILLON-20002588
 FLAGS = -Wall -Wextra -std=c++17
@@ -32,7 +32,7 @@ lib_personne.a:
 
 
 dist: clean
-	zip -r $(COURS)_$(TP)_$(NAME).zip .
+	zip -r [$(COURS)]_$(TP)_$(NAME).zip .
 
 clean: all
 	rm $(PROGS) libpoint2.a libpersonne_t.a

@@ -4,39 +4,30 @@
 using namespace std;
 
 
-class personne_t {
-    string nom;
-    string prenom;
-    int age;
-    string profession;
 
-    public:
-        personne_t(string nom, string prenom, int age) {
-            this->nom = nom;
-            this->prenom = prenom;
-            this->age = age;
-            
-        }
+personne_t::personne_t(string nom, string prenom, int age) {
+    this->nom = nom;
+    this->prenom = prenom;
+    this->age = age;
+    this->profession = "Sans emploi";
+}
         
-        void setAge(int age) {
-            this->age = age;
-        }
+void personne_t::setAge(int age) {
+    this->age = age;
+}
         
-        int getAge(void) {
-            return this->age;
-        }
+int personne_t::getAge(void) {
+    return this->age;
+}
         
-        string getProfession(void) {
-            cout<<"getProfession() not defined"<<endl;
-        }
-        void setProfession(string newProfessions) {
-            cout<<"setProfession() not defined"<<endl;
-        }
-        
-        string affiche(void) {
-			return prenom;
-            //return nom + " " + prenom + ", " + to_string( age) + " ans, " + profession + "de naissance.";
-        }
-};
+string personne_t::getProfession(void) {
+    return profession;
+}
+void personne_t::setProfession(string newProfessions) {
+    profession = newProfessions;
+}
 
+string personne_t::affiche(void) {
+    return nom + " " + prenom + ", " + to_string(age) + " ans, " + profession + " de naissance.";
+}
 
