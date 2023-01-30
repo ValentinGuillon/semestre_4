@@ -1,27 +1,40 @@
+
+COURS = [POO]
+TP = TP2
+NAME = Valentin-GUILLON-20002588
 FLAGS = -Wall -Wextra -std=c++17
 PROGS = exo1 exo2
 
-all: objects libpoint2.a $(PROGS)
+
+all: $(PROGS)
 
 
 
-objects:
+
+exo1: lib_point2.a
+	g++ $(FLAGS) exo1.cpp -L. -lpoint2 -o exo1
+
+exo2: lib_personne.a
+	g++ $(FLAGS) exo2.cpp -L. -lpersonne_t -o exo2
+
+
+lib_point2.a:
 	g++ -c point2.cpp
-
-#création de l'archive
-libpoint2.a: point2.o
 	ar -rsc libpoint2.a point2.o
 	rm *.o
 
-
-exo1: exo1.cpp
-	g++ $(FLAGS) exo1.cpp -L . -lpoint2 -o exo1
-
-exo2: exo2.cpp
-	g++ $(FLAGS) exo2.cpp -o exo2
+lib_personne.a:
+	g++ -c personne_t.cpp
+	ar -rsc libpersonne_t.a personne_t.o
+	rm *.o
 
 
 
-clean:
-	rm $(PROGS) libpoint2.a
+
+dist: clean
+	zip -r $(COURS)_$(TP)_$(NAME).zip .
+
+clean: all
+	rm $(PROGS) libpoint2.a libpersonne_t.a
+
 
