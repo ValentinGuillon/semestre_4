@@ -20,12 +20,18 @@ int main(void) {
     i=1; // on met 0 dans i
     while(i<=15) {
         if( d % i == 0) {
-            divisible_by += to_string(i) + ",";
+            if (divisible_by.size() > 0) {
+                divisible_by += ",";
+            }
+            divisible_by += to_string(i);
             //cout << 
             //cout << i << " divise " << d << endl;
         }
         else {
-            not_divisible_by += to_string(i) + ",";
+            if (not_divisible_by.size() > 0) {
+                not_divisible_by += ",";
+            }
+            not_divisible_by += to_string(i);
             //printf("%d ne divise pas %d\n",i,d);
         }
 
