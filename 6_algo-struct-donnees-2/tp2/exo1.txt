@@ -1,0 +1,12 @@
+
+  Temps         Type             n=5    n=10   n=50   n=250 n=1_000 n=10_000 n=1_000_000
+1 O(1)        | constante      | 10ns
+2 O(log(n))   | logarithmique  | 
+3 O(n log(n)) | linéarithmique |
+4 O(n)        | lineaire       |
+5 O(sqrt(n))  | racinaire      |
+6 O(n!)       | factorielle    |
+7 O(2^n)      | exponentielle  |
+8 O(n^2)      | quadratique    |
+9 O(n^3)      | cubique        |
+
