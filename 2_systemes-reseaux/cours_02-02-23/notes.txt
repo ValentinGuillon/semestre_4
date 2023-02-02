@@ -1,0 +1,56 @@
+
+I. 3) La couche physique
+
+	E. Exos
+	Représenter le signal 11000101 en utilisant les différents codages
+
+
+	 1  1  0  0  0  1  0  1 
+
+	Code en bande de base
+	|--|--|  |  |  |--|  |--|
+0   |  |  |--|--|--|  |--|  |
+	|  |  |  |  |  |  |  |  |
+
+	NRZ
+	|--|--|  |  |  |--|  |--|
+0   |  |  |  |  |  |  |  |  |
+	|  |  |--|--|--|  |--|  |
+
+	RZ
+	|- |- |  |  |  |- |  |- |
+0   | -| -|--|--|--| -|--| -|
+	|  |  |  |  |  |  |  |  |
+
+	Bipolaire
+	|--|  |  |  |  |--|  |  |
+0   |  |  |--|--|--|  |--|  |
+	|  |--|  |  |  |  |  |--|
+
+	Biphasé (Manchester)
+	|- |- | -| -| -|- | -|- |
+0   |  |  |  |  |  |  |  |  |
+	| -| -|- |- |- | -|- | -|
+
+	Miller
+	| -|- |  |--|  | -|--|- |
+0   |  |  |  |  |  |  |  |  |
+	|- | -|--|  |--|- |  | -|
+
+
+
+Controle polynomial :
+Trame: 1101011011
+Générator: 10011
+La trame:
+
+
+
+x9 x8 x6 x4 x3 x1 1 = 1+2+8+16+64+256+512 = 859
+x4 x1 1 = 1+2+16 = 19
+
+Trasmission
+(859 * 16) % 19 = 7
+
+ATTENTION PAS CORRIGÉ
+
