@@ -6,7 +6,7 @@ language:
 prof:
     Sven De Félice
 mail:
-    sdefelice@up8.site
+    sdefelice@up8.edu
 
 site du cours :
     https://defelice.up8.site/poo.html
