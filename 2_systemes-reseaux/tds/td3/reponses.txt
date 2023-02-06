@@ -1,0 +1,88 @@
+
+Systèmes et réseaux:
+
+
+TD3:
+
+
+
+Exo 1:
+	1. Réponse = 1.88 us
+
+		Temps transmission = Quantité/Débit
+		Trajet:   Emet ===> 100Mbps ===> R1 ->  1Gbps -> R2 ===> 80Mbps ===> Recep
+
+		10*8/100_000_000 + 10*8/1_000_000_000 + 10*8/80_000_000
+		= 0.00000188s
+		= 1.88 us
+
+
+	2. Réponse = 7.5 us
+
+		temps propag = distance / vitesse
+
+		distance = 15km + 5m*2
+		distance = 15 + 0.01
+		t = 15.01 / 200_000
+		t = 0.0000075 s
+		t = 7.5 us
+
+	3. Réponse = 18.76 us
+
+		temps ar = (t_trans + t_propag )* 2
+		t ar = (1.88 + 7.5) *2
+		t ar = 9.38 * 2
+		t ar = 18.76 us
+
+
+
+
+
+Exo 2:
+	1. Réponse: distance d'achemeniment = 80_000 km
+		distance d'acheminement AB = distance station from terre *2
+		distance = 40_000 * 2
+		distance = 80_000
+
+	2. Réponse: délai de transfert = 0.40001024 s + retard
+
+		délai de transfert = t trans + t propag + retard
+
+		t trans = quantité / débit
+		t trans = 128 o / 100 Mbps
+		t trans = 128*8 / 100_000_000
+		t trans = 0.00001024 s
+		t trans = 10.24 us
+
+		t propag = distance / vitesse
+		t progag = 80_000km / 200_000kmps
+		t progag = 0.4 s
+
+		délai = 10.24 us + 0.4s
+		délai = 0.40001024 s + retard
+
+
+	3. Réponse: 
+		délai avec procedure d'attente réponse = message d'origine + message d'acquittement...
+
+
+
+Exo 3:
+	1. Je dirais 8, car on peut écrire 256 nombres différents avec 8 bits
+		(Je viens de voir que y'avait le log2(256), j'avais pas la rèf)
+
+	2. Réponse: 54_400 bps
+		débit = 2*fréquence * nb bits
+		débit = 2*3_400 * 8
+		debit = 54_400 bps
+
+	3. Réponse: 54_000_000 bps
+		débit = (450*500 *8) *30
+		débit = 54_000_000 bps
+
+	4. Réponse:
+		Débit using shannon
+		débit = bande passante * log2(1 + rapport signal-bruit)
+		débit = 4.5MHz + log2(1 + 90dB)
+		débit = 4_500_000 + log2(91)
+
