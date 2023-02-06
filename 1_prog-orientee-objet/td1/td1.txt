@@ -1,0 +1,60 @@
+
+
+Exo 1: MI 1
+	ligne 18 << 0
+	ligne 20 << 1
+	ligne 22 << 1 #et non 5, car la variable à la même nom que l'attribut de classe, et cache donc cet attribut. Pour avoir 5, il faudrais écrire : ligne 11: this.a = a;
+
+
+Exo 2: MI 2
+	Error ligne 18: fonction non déclarée #on voudrais plutôt appeler; obj.methode();
+	#!! à noter que la ligne 11 ne créé pas d'erreur, car methode() étant appelée dans la classe, elle est implicitement this.methode()
+
+Exo3: MI 5
+	<< 2M\n1M
+	# comme méthode1() est un appel ambigu entre methode1() et A.methode1(), le prog choisi celle de la classe par défaut
+
+
+Exo4: MI 3
+	ligne 17 << 2M\n1F
+	#la ligne 9 permet de forcer l'appel de methode1() extern à la ligne 11
+	# on peut écrire; ::methode3()#ligne 11 (sans la ligne 9)
+
+
+
+Exo5: PPI 1
+	Ne compile pas (ERROR ligne 7). Tentative d'accès à un membre privé
+
+
+Exo6: PPI 3
+	Compile.
+
+
+Exo7: PPI 4
+	Ne compile pas (ERROR ligne 6) car membre privé
+	#!! quand on ne mentionne pas private/public, par défaut, c'est privé dans une classe
+
+
+Exo8: PPI 2.1
+	Compile. Le constructeur est implicitement construit (par défaut) et public
+
+
+Exo9: PPI 2.2
+	Ne compile pas (ERROR ligne 7). On déclare, donc appel au constructeur, mais qui est privé, donc ne compile pas	
+
+
+Exo10: SI 3
+	Ne compile pas (ERROR ligne 3), car les signatures (nom et type des variables) de f() sont identiques
+
+
+Exo11: SI 1
+	#!! ligne 9, c'est 1L, pas 11 #c'est pour dire que le 1 est un long (n'est pas un cast)
+	ligne 8  << f3
+	ligne 9  << f2
+	ligne 10 << f4 #la conversion long->char est char->long est possible
+	ligne 11 << f1
+
+
+Exo12: SI 2
+	Ne compile pas (ERROR ligne 6) car les signatures ne correspondent pas exactement à l'appel, et les deux conversion implicite dégrade la valeur
+
