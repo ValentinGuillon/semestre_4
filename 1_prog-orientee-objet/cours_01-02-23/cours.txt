@@ -1,0 +1,287 @@
+   Chapitre  3  variable et méthode de classe, (new,delete) vs (malloc,free)
+{{{
+
+*****Variable (ou attribut) de classe.*******
+
+ Par défaut, dans la définition d'une classe, la déclaration d'un champs 
+    est destiné à produire un attribut d'instance (ou d'objet).
+    C'est à dire que pour cet attribut, chaque objet possède une valeur
+    qui peut changer d'un objet à l'autre. (plus claire sur l'exemple qui suit)
+
+ Illustration :
+    struct A {
+       int var;  // attribut d'objet nommé par le champs : <var>
+    };
+    int main(){
+       A obj1;
+       obj1.var=1;
+       A obj2;
+       obj2.var=0;
+       // ici obj1.var==1 et obj2.var==0; 
+       // donc pour un même attribut (ici var) on a deux valeurs différentes : une par objet
+    }
+
+ Il est possible de spécifier un champs particulier dont la valeur est
+    partagée par tous les objets instanciés.
+
+ Ce champs spécial doit 
+    - être DÉCLARÉ static dans la classe 
+    - doit être DÉFINI hors de la classe une et une seule fois.
+
+ On appelle ce champs une variable de classe (ou attribut de classe).
+
+ Exemple :
+    struct A {
+       int at1;
+       int at2;
+       static int var; // variable de classe (ou attribut de classe)
+    };
+    int A::var=0;// définition obligatoire (une et une seule fois)
+    
+    int main()
+    {
+       A obj1;
+       A obj2; 
+       obj2.var=0;
+       obj1.var=1; // on modifie la variable de classe (ici var)
+       //ici  obj2.var==1==obj1.var (car obj2.var et obj1.var ont le même emplacement en mémoire !)
+
+       A::var=5; // autre moyen d'accéder à la variable de classe var
+
+      obj1.at1=2;
+      obj2.at1=3;
+      // ici obj1.at1==2 et obj2.at1==3 (at1 est un attribut d'instance)
+    }
+
+    ------------ schéma de la mémoire avant la fin de la fonction main ci-dessus ----
+                                                                                
+                        /  +---------+              / +---------+   
+                       |   | int at1 |             |  | int at1 |  
+    Pile :      obj1 --|   +---------+     obj2 ---|  +---------+  
+                       |   | int at2 |             |  | int at2 | 
+                        \  +---------+              \ +---------+ 
+  
+  
+                                           +-----------+ 
+  Mémoire      obj1.var==obj2.var  --->    | int var   | 
+  statique :                               +-----------+ 
+  
+ Remarque :
+    - Il faut que la variable de classe soit définie que dans UN seul fichier.o
+         Donc cette définition (comme toute définition de variable globale) 
+         ne doit pas figurer dans un fichier .hpp qui 
+         est destiné à être inclus à plusieurs endroit.
+
+    - On peut accéder à la variable de classe sans passer par un objet 
+      (exemple : A::var=5)
+    
+ ***********Méthode de classe***************
+
+ Par défaut, une fonction définie dans une classe définie
+    une méthode d'instance (ou méthode d'objet). C'est à dire
+    que la méthode ne peut être appelée qu'à partir d'une instance
+    de la classe. (autrement dit un   objet de la classe).
+
+ Exemple (illustration) :
+    struct A {
+       void maMethode(){}
+    };
+    int main(){
+      A obj;  
+      obj.maMethode(); // ok
+      maMethode(); // erreur
+      A::maMethode(); // erreur
+    }
+
+ En utilisant le mot-clé "static" on peut spécifier une méthode spéciale
+   qui n'a pas besoin d'être appelée à travers une instance de la classe.
+
+   Cette  méthode spéciale est appelée une méthode de classe.
+
+Exemple :
+    struct A {
+       static void maMethode(){}
+    };
+    int main(){
+      A obj;  
+      obj.maMethode(); // ok
+      A::maMethode(); // ok
+    }
+
+Remarque :
+      Une méthode de classe peut être définie hors de la classe (de la même
+         manière que le serait une méthode d'instance) et seulement 
+         déclarée dans la classe avec le mot clé "static".
+
+La méthode de classe étant faite pour pouvoir être appelée hors de tout instance :
+      - elle ne peut pas accéder à des membres d'instances 
+         (par exemple elle ne peut pas accéder à une méthode d'instance ou un attribut d'instance)
+      - elle peut accéder à d'autre membres de classes 
+         (qui ne sont donc pas des membre d'instance).
+
+Exemple :
+ class A {
+    int attrInst;        // pas static donc attribut d'INSTANCE
+    static int attrClass; // static donc attribut de CLASSE
+
+    void maMethodeDinst(){} // pas de static donc méthode d'INSTANCE
+    static void maMethode(){} // static donc méthode de CLASSE
+    static void maMethode2(){ 
+      attrClass=3; // ok variable de classe
+      maMethode(); // ok autre methode de classe
+      attrInst; // erreur attribut d'instance
+      maMethodeDinst(); // erreur methode d'instance
+    }
+ };
+
+*************  Résumé des membres d'une classe *********
+
+   Pour résumé, dans une classe chaque membre  :
+      - est soit un attribut (une variable) / soit une méthode (une fonction)
+      - est soit public / soit private (il y a aussi protected )
+      - est soit membre d'instance / soit membre de classe 
+
+   Remarque :
+      - le qualificatif <protected> ne sert qu'en cas d'héritage. Sans héritage
+         protected est synomyme de private.
+      - membre d'instance : attribut d'instance ou méthode d'objet/d'instance) 
+      - membre de classe : variable de classe ou méthode de classe)
+      - les constructeurs et le destructeur sont des méthodes d'instances
+         (constructeur : premier a être appelé, destructeur : dernier à être appelé)
+
+*********** allocation dynamique et appel explicite au constructeur/destructeur*********** 
+
+   Le concepteur d'une classe doit concevoir sa classe tout en sachant
+      que toute instance de classe sera initialisée par le constructeur
+      et que le destructeur sera appelé à la  "fin de vie" (i.e. lorsqu'on
+      n'en aura plus besoin) de l'instance.
+
+  Pour des variables automatiques (variables définies dans une fonction)
+      le compilateur s'occupe de faire appel au constructeur et au destructeur sans que
+      l'utilisateur n'ai besoin de l'expliciter.
+
+   Exemple :
+      struct A{
+         A(){} // construteur A1
+         A(int a){} // construteur A2
+      };
+      int main()
+      {
+         // reservation sur la pile de o1 et o2 (donc  2*sizeof o1 en tout)
+         A o1; //  appel au constructeur sans paramètre (A1) sur &o1 (adresse de o1)
+         A o2{3}; // appel  au constructeur A2 sur &o2
+
+         // ici appel au  destructeur sur o2  puis sur o1 
+         // depilement de o2 et o1
+      } 
+
+   Remarque :
+      Lorsque que comme ici il n'y a pas définition du destructeur alors
+         un destructeur (par défaut) est tout même concu et appelé lors de la destruction.
+
+   Comment faire maintenant pour des objets alloués dynamiquement (i.e.  sur le tas ?
+      i.e. manuellement comme avec malloc) ? 
+   Réponse (pour construire) :
+      2 méthodes :
+         méthode a) 
+            1 - allouer assez de place (avec malloc et sizeof)
+            2 - appeler le constructeur sur cette zone mémoire.
+         méthode b)
+            utiliser l'opérateur new qui effectue les 2 opérations en une instruction.
+
+   Pour détruire, deux méthodes également (voir exemple).
+
+   Voir l'exemple suivant pour la syntaxe utilisée 
+
+   Exemple :
+      #include<cstdlib>
+      struct A{
+         A(int a){}
+      };
+      int main()
+      {
+         A o1;
+
+         A* ptr1=(A*)malloc(sizeof(A)); // allocation mémoire SANS appel au constructeur 
+
+         new(ptr1) A{3}; // appel explicite au constructeur sur l'adresse ptr1 
+                        // donc SANS allocation mémoire
+            
+         A* ptr2=new A{4}; // allocation mémoire suivit de l'appel au constructeur sur 
+                           // l'adresse ptr2. Taille mémoire allouée : sizeof(A)
+         
+
+         delete ptr2; // appel du destructeur sur l'adresse ptr2 
+                       // suivi de libération mémoire à l'adresse  ptr2 
+                       // taille mémoire libérée : sizeof(A)
+
+
+         (*ptr1).~A(); // appel explicite du destructeur
+                        // SANS libération de mémoire
+                        // (on aurait pu écrire ptr1->~A(); 
+         free(ptr1)  // libération de la mémoire
+
+      } // appel (implicite) du destructeur et libération mémoire utilisé par o1;
+
+      Remarque :
+         toute création avec new doit être libéré avec delete
+         toute reservation avec malloc doit être libéré avec free
+
+*************Tableau statique et dynamique new[] et delete[]*********
+
+      Si A est un identifiant de classe alors l' instruction 
+
+         A t[10];
+
+      reserve sur la pile, de la place pour 10 éléments et construit avec 
+         le constructeur sans paramètre un élément dans chacune des cases.
+
+      Lorsque l'objet <t> arrive en fin de vie (par exemple à la fin du programme, 
+         ou de la fonction) le destructeur de la classe A est implicitement appelé sur chaque 
+         case du tableau puis la pile est libéré de la place occupé par t.
+
+      Remarque :
+         Si le constructeur sans paramètre de la classe A n'existe pas (ou n'est pas
+            acessible) erreur à la compilation.
+         La bibliothéque standard du C++ propose un type paramètré (type générique) <array>
+            qui permet de créer des tableaux statiques (comme ici) mais avec des 
+            fonctionnalitées supplémentaires.
+
+      Pour allouer puis libéerer un tableau dynamiquement on peut utiliser les opérateurs
+         new[] puis delete[] (voir exemple suivant)
+
+         Exemple :
+            #include<iostream>
+            struct A{};
+            int main()
+            {
+               int n;
+               cin>>n;
+               A* t=new A[n]; // allocation de sizeof(A)*n octets de mémoire
+                     // puis n appels au constructeur sans paramètre, 1 fois sur chaque case
+
+               delete[] t; // appel au destructeur sur chaque case de la zone mémoire 
+                  // située à l'adresse t (n fois ici) puis libération de la mémoire
+            }
+
+      Remarque :
+         L'opérateur <delete[]> est différent de l'opérateur <delete>
+            <delete> appel le destructeur de la classe une fois,
+            <delete[]> sur chaque case  du tableau (qui a du être initialisé avec new[])
+         Si le constructeur sans paramètre de la classe A n'est pas disponible
+            alors erreur de compilation.
+         Toute création avec new[] doit être libéré avec delete[]
+         Pour réserver dynamiquement un tableau de n éléments d'un type
+            classe A on peut aussi utiliser
+            un appel à malloc puis appeler explicitement le constructeur sur chacune
+            des cases. 
+
+            Exemple : 
+               A* ptr=(A*)malloc(sizeof(A)*n); 
+               new(ptr)A{..};
+               new(ptr+1)A{..};
+               new(ptr+2)A{..};
+               ..
+
+   }}}
+
