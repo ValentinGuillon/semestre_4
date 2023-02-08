@@ -1,6 +1,12 @@
 
-FLAGS= -Wall -Wextra -g
+COURS = ASD2
+DEVOIR = TP2
+PROGRAMMER = GUILLON-Valentin-20002588
+
+FLAGS = -Wall -Wextra -g
 PROGS= exo2-1 exo2-2 exo4
+
+
 
 all: $(PROGS)
 
@@ -17,5 +23,9 @@ exo4:
 
 
 
-clean:
+dist: clean
+	zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip .
+
+
+clean: all
 	@rm $(PROGS)
