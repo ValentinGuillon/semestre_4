@@ -7,7 +7,7 @@ prof:
     Farès Belhadj
 
 cours:
-    https://expreg.org/ansi
+    https://expreg.org/amsi
     -> enseignements
     -> S.I.A.S S2 22-23
 
