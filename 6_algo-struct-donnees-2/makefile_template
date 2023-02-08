@@ -1,0 +1,23 @@
+
+COURS = ASD2
+DEVOIR = 
+PROGRAMMER = GUILLON-Valentin-20002588
+
+FLAGS = -Wall -Wextra -g
+PROGS = exo_x
+
+all: $(PROGS)
+
+
+
+exo_x:
+	gcc $(FLAGS) exo_x.c -o exo_x
+
+
+dist: clean
+	zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip .
+
+
+clean:
+	rm $(PROGS)
+
