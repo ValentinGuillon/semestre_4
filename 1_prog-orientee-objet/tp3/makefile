@@ -8,13 +8,13 @@ PROGS = exo1
 
 all: $(PROGS)
 
-# exo1: lib_point2.a
-# 	g++ $(FLAGS) exo1.cpp -L. -lpoint2 -o exo1
-
-# lib_point2.a:
-# 	g++ -c point2.cpp
-# 	ar -rsc libpoint2.a point2.o
-# 	rm *.o
+#exo_avec_lib: libExos.a
+#	g++ $(FLAGS) exo_avec_lib.cpp -L. -lExos -o exo_avec_lib
+#
+#libExos.a:
+#	g++ -c exos.cpp
+#	ar -rsc libExos.a exos.o
+#	rm *.o
 
 
 
@@ -28,6 +28,5 @@ dist: clean
 	zip -r [$(COURS)]_$(TP)_$(NAME).zip .
 
 clean: all
-	rm $(PROGS)
-
-
+	@rm $(PROGS)
+	#@rm libExos.a
