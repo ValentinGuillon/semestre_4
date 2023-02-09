@@ -1,0 +1,127 @@
+
+Contrôle polynomial:
+
+Exo:
+
+	U = 10101
+	G(x) = x^3 + 1
+	Code = ?
+
+	U(x) = x^4 + x^2 + x^0
+
+	U'(x) = U(x) * x^3
+	U'(x) = x^7 + x^5 + x^3
+
+	R(X) = U'(x) % G(x)
+
+
+	10101000 | 1001
+			 |------
+   -1001     | 111
+    ----
+       11000
+      -1001
+       ----
+        1100
+       -1001
+        ----
+          11
+
+
+    R(x) = 11
+
+    Code = U'(x) + R(x)
+
+
+
+Checksum: est le complément de la somme des blocks
+
+Exo:
+
+trame = 1110 0010 1110 1100 en block de 4
+
+   1
+   1 1
+	1110
+   +0010
+   +1110
+   +1100
+   -----
+  101010    BON
+
+ => 1010
+   +  10
+    ----
+    1100    BON
+    0011
+
+
+checksum = 1110 0010 1110 1100 0011
+
+( ???
+
+vérif = 
+
+    1
+    1
+	1110
+   +0010
+   +1110
+   +1100
+   +0011
+    ----
+ 1001101
+
+)
+
+
+
+
+Synchronisation des trames:
+
+trame = 10010101 01011111 11010111 11011001
+flags = 01111110
+ESC = 11100000
+
+
+méthode character:
+
+F 101 10010101 01011111 11010111 11011001 F
+
+méthode bourrage octets:
+
+F 10010101 01011111 11010111 11011001 F
+
+méthode bourrage bits:
+
+F 10 01010101 01111101 10101111 10011001 F
+
+
+
+
+Gestion d'acquitement
+	protocole Sent and Wait:
+		renvoyer le message, tant que l'accusé de rep n'est pas reçu avant un certain délai
+
+	rejet simple:
+		on envoie plusieurs paquet en méme temps, on renvoie le même nombre de paquets à partir du dernier paquet dont on a pas reçu l'accusé de rèp
+
+	rejet sélectif:
+		on envoie plusieurs paquet à la fois, et on reçoit un acc positif ou négatif. En renvoie ensuite les paquets avec un acc négatif
+
+
+
+protocoles d'accès multiple:
+	statique
+		réserve la session pour un utilisateur
+
+	aléatoire
+		ALOHA -> accès quand on le souhaite, si erreur
+
+
+		CSMA -> j'ai oublié ptdr
+			/CD = Collision Detection
+			/CA = Collision Avoidance
+
+
+
