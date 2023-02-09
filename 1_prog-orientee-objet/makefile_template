@@ -1,0 +1,38 @@
+
+COURS = POO
+TP = ?
+NAME = Valentin-GUILLON-20002588
+FLAGS = -Wall -Wextra -std=c++17
+PROGS = exoX
+
+
+all: $(PROGS)
+
+
+
+exoX:
+	g++ $(FLAGS) exoX.cpp -o exoX
+
+
+
+
+#exo_avec_lib: libExos.a
+#	g++ $(FLAGS) exo_avec_lib.cpp -L. -lExos -o exo_avec_lib
+#
+#libExos.a:
+#	g++ -c exos.cpp
+#	ar -rsc libExos.a exos.o
+#	rm *.o
+
+
+
+
+
+dist: clean
+	zip -r [$(COURS)]_$(TP)_$(NAME).zip .
+
+clean: all
+	@rm $(PROGS)
+	#@rm libExos.a
+
+
