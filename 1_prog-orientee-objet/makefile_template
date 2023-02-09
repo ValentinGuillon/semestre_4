@@ -1,7 +1,7 @@
 
 COURS = POO
 TP = ?
-NAME = Valentin-GUILLON-20002588
+NAME = GUILLON-Valentin-20002588
 FLAGS = -Wall -Wextra -std=c++17
 PROGS = exoX
 
