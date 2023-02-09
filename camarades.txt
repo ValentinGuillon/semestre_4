@@ -19,14 +19,14 @@ Yanis LARIBI
 Julian LOZANO PENAGOS
 Axel M'BANGAS
 Idris MESSAÂD
-Yanis
-Raphael
-Hocine
-Samy
-Julien
-Viet
-William
-Samy
+Yanis METADJER
+Raphael MOSCATELLI
+Hocine NAIT SAADA
+Samy NAJI
+Julien NGUYEN
+Viet NGUYEN
+William 
+Samy OULTACHE
 Antonin
 Ludovic
 Dany
