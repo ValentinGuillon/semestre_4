@@ -1,23 +1,44 @@
 
 COURS = ASD2
-DEVOIR = 
+DEVOIR = test
 PROGRAMMER = GUILLON-Valentin-20002588
+DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
+FILESFORDIST = makefile exoX.c exo2.c
+
 
 FLAGS = -Wall -Wextra -g
-PROGS = exo_x
+PROGS = exoX
 
 all: $(PROGS)
 
 
+#exo_avec_lib: libExos.a
+#	g++ $(FLAGS) exo_avec_lib.cpp -L. -lExos -o exo_avec_lib
+#
+#libExos.a:
+#	g++ -c exos.cpp
+#	ar -rsc libExos.a exos.o
+#	rm *.o
 
-exo_x:
-	gcc $(FLAGS) exo_x.c -o exo_x
+
+exoX:
+	gcc $(FLAGS) exoX.c -o exoX
 
 
-dist: clean
-	zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip .
+
+
+
+distdir: 
+	rm -rf $(DISTDIRNAME)
+	mkdir $(DISTDIRNAME)
+	cp $(FILESFORDIST) $(DISTDIRNAME)
+
+
+dist: clean distdir
+	zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTDIRNAME)
+	rm -rf $(DISTDIRNAME)
 
 
 clean:
-	rm $(PROGS)
+	rm -f $(PROGS)
 
