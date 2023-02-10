@@ -11,7 +11,7 @@ INCLUDE = include/ #dossier dans lequel on met les headers
 
 CC = gcc #ou g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER) #nom du dossier pour la création de l'archive
-FILESFORDIST = -r $(DIR_SRC) $(DIR_INCLUDE) #+ exo_test.c exo1.c exo2.c ... #liste des fichiers à mettre dans le zip. Le -r permet de récupérer les fichiers qui sont dans des dossiers, et ainsi garder le même rangement dans l'archive
+FILESFORDIST = -r makefile $(DIR_SRC) $(DIR_INCLUDE) #+ exo_test.c exo1.c exo2.c ... #liste des fichiers à mettre dans le zip. Le -r permet de récupérer les fichiers qui sont dans des dossiers, et ainsi garder le même rangement dans l'archive
 
 CFLAGS = -Wall -Wextra -g
 PROGS = #exo_test exo1 exo2 ...  #liste des exécutables. Faire en sort que chaque exé ai sa cible dans le makefile

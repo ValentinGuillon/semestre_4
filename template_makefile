@@ -13,7 +13,7 @@ INCLUDE = include/
 
 CC = gcc
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = -r $(DIR_SRC) $(DIR_INCLUDE) testeco.c
+FILESFORDIST = -r makefile $(DIR_SRC) $(DIR_INCLUDE) testeco.c
 
 
 COLOR_OPEN = \033[38;2;255;154;0m
