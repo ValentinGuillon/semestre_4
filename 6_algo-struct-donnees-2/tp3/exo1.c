@@ -25,22 +25,24 @@ int main(void) {
 	fill(list, SIZE);
 	memcpy(temp, list, sizeof(list));
 
-	printf("Tableau de base:\n");
-	affiche_tableau(list, SIZE);
+	printf("\nTableau de base: (%d éléments)\n", SIZE);
+	// affiche_tableau(list, SIZE);
+	affiche_extremites_tableau(list, SIZE);
 
+	printf("\nTemps moyen de tri: (sur 10 exécutions)\n");
+	printf("Processing...\n");
 
-	printf("Le temps du normal est %f\n", time_spent(tri_a_bulle, list, SIZE));
-
+	printf("Normal: \033[38;2;255;154;0;1m%f\033[0m\n", time_spent(tri_a_bulle, list, SIZE));
+	memcpy(list, temp, sizeof(temp));
+	printf("Optimisé: \033[38;2;255;154;0;1m%f\033[0m\n", time_spent(tri_a_bulle_optimise, list, SIZE));
 
 	memcpy(list, temp, sizeof(temp));
-	printf("Le temps du optimise est %f\n", time_spent(tri_a_bulle_optimise, list, SIZE));
-
-	memcpy(list, temp, sizeof(temp));
-	printf("Le temps du mien, le meilleur, est %f\n", time_spent(tri_a_bulle_giga_optimise, list, SIZE));
+	printf("Le mien, le meilleur: \033[38;2;255;154;0;1m%f\033[0m\n", time_spent(tri_a_bulle_giga_optimise, list, SIZE));
 
 
-	printf("Tableau trié:\n");
-	affiche_tableau(list, SIZE);
+	printf("\nTableau trié:\n");
+	// affiche_tableau(list, SIZE);
+	affiche_extremites_tableau(list, SIZE);
 
 
 	return 0;
@@ -63,7 +65,6 @@ double time_spent(int (*fonction)(int*, int), int T[], int size) {
 	start = clock();
 	fonction(T, size);
 	end = clock();
-
 
 	time = (double)(end - start) / CLOCKS_PER_SEC;
 	return time;
