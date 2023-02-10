@@ -29,7 +29,7 @@ int main(void) {
 	// affiche_tableau(list, SIZE);
 	affiche_extremites_tableau(list, SIZE);
 
-	printf("\nTemps moyen de tri: (sur 10 exécutions)\n");
+	printf("\nTemps moyen de tri:\n");
 	printf("Processing...\n");
 
 	printf("Normal: \033[38;2;255;154;0;1m%f\033[0m\n", time_spent(tri_a_bulle, list, SIZE));
