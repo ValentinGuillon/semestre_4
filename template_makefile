@@ -13,13 +13,13 @@ INCLUDE = include/
 
 CC = gcc
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = -r makefile $(DIR_SRC) $(DIR_INCLUDE) testeco.c
+FILESFORDIST = -r makefile $(SRC) $(INCLUDE)
 
 
 COLOR_OPEN = \033[38;2;255;154;0m
 COLOR_CLOSE = \033[0m
 CFLAGS = -Wall -Wextra -g
-PROGS = testeco
+PROGS = 
 
 
 # exemple:
@@ -33,10 +33,10 @@ all: $(PROGS)
 
 # il doit exister include/fonctions.h, src/fonctions.c et exo_avec_lib.c
 # exo_avec_lib: libfonctions.a
-# 	$(CC) $(FLAGS) exo_avec_lib.c -I$(INCLUDE) -L$(SRC) -lfonctions -o exo_avec_lib
+# 	$(CC) $(CFLAGS) exo_avec_lib.c -I$(INCLUDE) -L. -lfonctions -o exo_avec_lib
 # 	rm -f libfonctions.a
 
-# libexos.a:
+# libfonctions.a:
 # 	$(CC) -c $(SRC)fonctions.c
 # 	ar -rsc libfonctions.a fonctions.o
 # 	find . -name "*.o" -delete
@@ -49,8 +49,7 @@ distdir:
 	$(SHOW)rm -rf $(DISTDIRNAME)
 	$(SHOW)mkdir $(DISTDIRNAME)
 	$(SHOW)cp $(FILESFORDIST) $(DISTDIRNAME)
-	@$(COMMENT)echo "$(COLOR_OPEN)Régroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
-
+	@$(COMMENT)echo "$(COLOR_OPEN)Regroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
 
 dist: clean distdir
 	$(SHOW)rm -f [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip
@@ -64,7 +63,7 @@ dist: clean distdir
 clean:
 	$(SHOW)find . -name "*.o" -delete
 	@$(COMMENT)echo "$(COLOR_OPEN)Suppression de tous les .o$(COLOR_CLOSE)"
-	$(SHOW)rm -f $(DIR_SRC)libtri_a_bulle_corrige.a
-	@$(COMMENT)echo "$(COLOR_OPEN)Suppression de $(DIR_SRC)libtri_a_bulle_corrige.a$(COLOR_CLOSE)"
+	$(SHOW)find . -name "*.a" -delete
+	@$(COMMENT)echo "$(COLOR_OPEN)Suppression de tous les .a$(COLOR_CLOSE)"
 	$(SHOW)rm -f $(PROGS)
 	@echo "$(COLOR_OPEN)Suppression de $(PROGS)$(COLOR_CLOSE)"
