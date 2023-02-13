@@ -1,0 +1,188 @@
+
+chap 4 : référence et const
+
+
+si a est un type, on peut définir une référence sur A: (A&ref=...)
+c'est une sorte de pointeur constant
+
+exemple:
+
+int main() {
+	int a=1;
+	int &ref = a;
+
+	red = 2;
+	//a==2 et ref==2
+}
+
+
+const:
+	unt reference doit être initialisée dès sa création
+
+
+autre exemple:
+
+void f(int p) {
+	p=1;
+}
+
+void g(int &q) {
+	q=2;
+}
+
+int main() {
+	int var=0;
+	f(var);
+	//ici var ==0;
+	g(var)
+	//ici var==2
+}
+
+une fonction peut également renvoyer une référence
+
+
+exemple:
+
+class A {
+	int a;
+
+	public:
+		int &accesseur() {
+			return this->a;
+		}
+};
+
+int main() {
+	int var;
+	A obj;
+	obj.accesseur() = 3;
+	var=obj.accesseur();
+}
+
+
+
+
+const:
+	Pour une classe A, on peut définir des obkets canstants, mais seules les méthodes déclarées "const" peuvent être appelées sur un objet constant
+
+
+Exemple:
+
+struct A {
+	int a;
+	void methodeNC(){}
+	void methodeC() const {}
+}
+
+int main() {
+	
+	A obj2;
+	A const obj; //const A obj; fonctionne aussi;
+
+	obj.methodeNC(); //erreur à la compilation
+					 //car methode NC n'est pas déclarée "const"
+
+	obj.methodeC(); //OK methodeC est déclarée const
+
+	obj2.methodeC() // OK
+	obj2.methodeNC() // OK aussi
+}
+
+
+
+
+cette règle ne s'applique ni au constructeur ni au destructeur
+
+une méthode déclarée const ne peut pas modifier un attribut de classe, excepté si celui-ci est déclarée mutable
+
+
+exemple:
+struct A {
+	int a;
+	mutable int b;
+	void set(int p) const {
+		this->a = p ; //va créer une errue à la compilation
+	} 
+	int get(void) const {
+		return this->a; //OK
+	}
+
+	void setB(int p) const {
+		this-> b = p; //OK car this->b est mutable
+	}
+}
+
+
+
+
+
+
+conversion implicite non const vers const
+
+Rappel (de C):
+
+int* p1;
+const int* p2;
+int* const p3 =...;
+cont int* const p4 =...;
+
+p3 = &...; //erreur p3 est constant
+p4 = &...; //erreur p4 est constant
+*p3 = ...; //OK
+*p4 = ...; //erreur
+p1 = ...; //ok
+p1 = ...; //ok
+*p1 = ...; //ok
+*p2 = ...; //erreur
+
+
+exemple:
+
+const int a =4;
+
+
+
+
+
+
+constucteur par copie:
+
+dans toute les classe, il existe un constructeur par copie
+
+exemple:
+
+struct a {};
+
+int main() {
+	A obj;      // appel constructeur sans paramètre.
+	A obj2=obj; // appell du constructeur par copie
+			    //ce n'est pas une affectation
+			    //équivalent à A objet2(obj);
+}
+
+
+
+pour toute classe A, il existe par défaut un constructeur de copie
+
+on peut le remplacer en définissant:
+	un constructeur A(const A &ref){}
+    ou              A(A &ref){}
+
+
+autre exemple:
+
+struct A {
+	A(void) {cout<<"je suis A()"<<endl;}
+	A(const A &ref) {cout<<"je suis a(const A &ref)"<<endl;}
+}
+
+
+void f(A p) {}
+
+int main() {
+	A obj; //appel de A()
+	f(ob); //appel de A(const A &ref)
+}
+
+
+

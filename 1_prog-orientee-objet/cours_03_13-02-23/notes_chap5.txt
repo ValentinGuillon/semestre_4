@@ -1,0 +1,59 @@
+
+chap 5 : opérateurs
+
+en plus des opérateurs du C
+exemple: a+b, a*b, *b, a=b, &b, a==b, ',', +=, a(b, c, d)
+
+le C++ incorpore quelques nouveaux opérateurs
+static_cast<a>(b)
+
+En c++, on peit surcharger certains opérateurs
+
+On peut surcharger un opérateur
+	- à l'intérieur d'une class (en tant que méthode)
+	- à l'extérieur
+
+mais il faut que l'un des paramètres soit issu d'une classe, et l'arité (nombre d'opérande) doit être conservé
+
+exemple
+struct frac_t {
+	int n;
+	int d;
+	fract_t operator+(frac_t p) {
+		p.n = p.n*this->d+...
+		...
+	}
+}; //fin de la classe
+
+
+//à l'extérieur de la classe
+
+frac_t operator*(frac_t p1; frac_t p2) {
+	p1.n = p1.n * p2.n;
+	p1.d = p1.d * p2.d; //on peut accéder à .d (ou .n) car frac_t est un struct, et non une classe. Ils sont donc public
+	return p1;
+}
+
+
+
+Règle d'appels des opérateurs
+
+l'ensemble des opérateurs est hiérarchisé
+
+(ordonnée par priorité décroissant)
+*a
+a*b, a/b
+a+b, a-b
+a=b
+
+
+Lorsque la compilation C++ rencontre une expression
+
+	1. il commence par construire l'ordre d'expression en fonction de règles de priorité et d'assiciativité (sans s'occuper des types)
+	2. puis il tente d'associer chaque opérateur:
+		soit par un opérateur primitif (int+int, int*+int, double*double)
+		soit par une des surcharges défini par l'user (opérator +(...))
+
+exemple:
+
+ez = a + b * c / e - 4 + * h / 7 = 3
