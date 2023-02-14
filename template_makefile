@@ -37,7 +37,7 @@ all: clean $(PROGS)
 
 
 distdir: 
-	$(SHOW)if [ -d $(DISTDIRNAME) ]; then $(SHOW)rm -rf $(DISTDIRNAME); fi
+	$(SHOW)if [ -d $(DISTDIRNAME) ]; then rm -rf $(DISTDIRNAME); fi
 	$(SHOW)mkdir $(DISTDIRNAME)
 	$(SHOW)cp $(FILESFORDIST) $(DISTDIRNAME)
 	$(SHOW)if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTDIRNAME); fi
