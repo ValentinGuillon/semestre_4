@@ -22,7 +22,7 @@ int main(void) {
 	cut_tree(tree);
 
 	//deuxième arbre
-	tree = add_n(18, add_n(4, add_n(2, NULL, add_n(5, NULL, NULL)), add_n(24, NULL, NULL)), add_n(19, NULL, NULL));
+	tree = add_n(18, add_n(4, add_n(2, NULL, add_n(5, NULL, NULL)), add_n(17, NULL, NULL)), add_n(19, NULL, NULL));
 	printf("\nArbre 2: ne devrait pas être de recherche (à cause du 5)\n");
 	analyse_tree(tree, 2);
 	cut_tree(tree);
@@ -62,6 +62,7 @@ void analyse_tree(noeud_t* tree, int id) {
 
 	arbre_est_binaire = is_search_binary_tree(tree, &min, &max);
 	print_tree(tree, 0);
+	print_t(tree);
 
 	if (arbre_est_binaire) {
 		printf("\033[38;2;255;154;0;1mL'arbre %d est un binaire de recherche\n", id);

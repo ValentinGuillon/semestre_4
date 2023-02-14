@@ -41,6 +41,11 @@ int min_of_tree(noeud_t* tree);
 int max_of_tree(noeud_t* tree);
 
 
+//retourne la hauteur de l'arbre
+int hauteur(noeud_t* tree);
+
+int max(int a, int b);
+
 
 //affiche tout le sous-arbre gauche, puis le droit, en parcours préfixe
 void print_tree(noeud_t* tree, int profondeur);
@@ -209,9 +214,20 @@ int max_of_tree(noeud_t* tree) {
 
 
 
+int hauteur(noeud_t* tree) {
+	if (tree == NULL)
+		return -1;
+	
+	return 1 + max(hauteur(tree->g), hauteur(tree->d));
+}
 
 
 
+int max(int a, int b) {
+	if (a >= b)
+		return a;
+	return b;
+}
 
 
 
@@ -270,3 +286,79 @@ void print_parenthèse(int n, int ouvrant) {
 	}
 }
 
+
+
+// #define COMPACT
+
+int _print_t(noeud_t *arbre, int is_left, int offset, int depth, char s[20][255]) {
+    char b[20];
+    int width = 5;
+
+    if (!arbre) return 0;
+
+    sprintf(b, "(%03d)", arbre->v);
+
+    int g  = _print_t(arbre->g, 1, offset, depth + 1, s);
+    int d = _print_t(arbre->d, 0, offset + g + width, depth + 1, s);
+
+#ifdef COMPACT
+    for (int i = 0; i < width; i++)
+        s[depth][offset + g + i] = b[i];
+
+    if (depth && is_left) {
+
+        for (int i = 0; i < width + d; i++)
+            s[depth - 1][offset + g + width/2 + i] = '-';
+
+        s[depth - 1][offset + g + width/2] = '.';
+
+    } else if (depth && !is_left) {
+
+        for (int i = 0; i < g + width; i++)
+            s[depth - 1][offset - width/2 + i] = '-';
+
+        s[depth - 1][offset + g + width/2] = '.';
+    }
+#else
+    for (int i = 0; i < width; i++)
+        s[2 * depth][offset + g + i] = b[i];
+
+    if (depth && is_left) {
+
+        for (int i = 0; i < width + d; i++)
+            s[2 * depth - 1][offset + g + width/2 + i] = '-';
+
+        s[2 * depth - 1][offset + g + width/2] = '+';
+        s[2 * depth - 1][offset + g + width + d + width/2] = '+';
+
+    } else if (depth && !is_left) {
+
+        for (int i = 0; i < g + width; i++)
+            s[2 * depth - 1][offset - width/2 + i] = '-';
+
+        s[2 * depth - 1][offset + g + width/2] = '+';
+        s[2 * depth - 1][offset - width/2 - 1] = '+';
+    }
+#endif
+
+    return g + width + d;
+}
+
+void print_t(noeud_t *arbre) {
+    char s[20][255];
+    for (int i = 0; i < 20; i++)
+        sprintf(s[i], "%80s", " ");
+
+    _print_t(arbre, 0, 0, 0, s);
+
+	int h = hauteur(arbre);
+	int mult = 0;
+#ifdef COMPACT
+		mult = 2;
+#else 
+		mult = 3;
+#endif
+
+    for (int i = 0; i < (h*mult) - 1; i++)
+        printf("%s\n", s[i]);
+}

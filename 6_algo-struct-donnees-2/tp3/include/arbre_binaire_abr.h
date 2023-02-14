@@ -31,3 +31,9 @@ void print_tree(noeud_t* tree, int profondeur);
 //affiche différent type de parenthèse en fonction de n
 void print_parenthèse(int n, int ouvrant);
 
+
+
+
+int _print_t(noeud_t *arbre, int is_left, int offset, int depth, char s[20][255]);
+
+void print_t(noeud_t *arbre);
