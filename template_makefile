@@ -16,8 +16,9 @@ DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
 FILESFORDIST = makefile
 
 
-COLOR_OPEN = \033[38;2;255;154;0m
 COLOR_CLOSE = \033[0m
+COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
+COLOR_SECOND_OPEN = $(COLOR_CLOSE)\033[38;2;0;255;255m
 CFLAGS = -Wall -Wextra -g
 PROGS = 
 
@@ -42,22 +43,23 @@ distdir:
 	$(SHOW)cp $(FILESFORDIST) $(DISTDIRNAME)
 	$(SHOW)if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTDIRNAME); fi
 	$(SHOW)if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTDIRNAME); fi
-	@$(COMMENT)echo "$(COLOR_OPEN)Regroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Regroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
 
 dist: clean distdir
 	$(SHOW)rm -f [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip
-	@$(COMMENT)echo "$(COLOR_OPEN)Suppression de l'archive [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip$(COLOR_CLOSE)"
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de l'archive [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip$(COLOR_CLOSE)"
 	$(SHOW)zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTDIRNAME)
 	@echo "$(COLOR_OPEN)Création du .zip terminée$(COLOR_CLOSE)"
 	$(SHOW)rm -rf $(DISTDIRNAME)
-	@$(COMMENT)echo "$(COLOR_OPEN)Suppression du dir $(DISTDIRNAME)$(COLOR_CLOSE)"
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression du dir $(DISTDIRNAME)$(COLOR_CLOSE)"
 
 
 clean:
 	$(SHOW)find . -name "*.o" -delete
-	@$(COMMENT)echo "$(COLOR_OPEN)Suppression de tous les .o$(COLOR_CLOSE)"
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de tous les .o$(COLOR_CLOSE)"
 	$(SHOW)rm -f $(PROGS)
-	@echo "$(COLOR_OPEN)Suppression de $(PROGS)$(COLOR_CLOSE)"
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de $(PROGS)$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)Nettoyage terminé !$(COLOR_CLOSE)"
 
 
 
@@ -103,7 +105,7 @@ clean:
 # exo: fonctions.a
 # # création de l'éxécutable avec la librairie créé dans la cible libfonctions.a
 # # puis suppression de celle-ci
-# # options de la compilation; -I<dossier des .h> -L<dossier de la lib (.a)> -l<nom de la lib> (à noter que la lib doit obligatoirement s'appeler "lib<nom>.a")
+# # options de la compilation; -I<dossier des .h> -L<dossier de la lib> (.a)> -l<nom de la lib> (à noter que la lib doit obligatoirement s'appeler "lib<nom>.a")
 # 	$(CC) $(FLAGS) exo.c -I$(INCLUDE) -L. -lfonctions -o exo
 
 # fonctions.a:
