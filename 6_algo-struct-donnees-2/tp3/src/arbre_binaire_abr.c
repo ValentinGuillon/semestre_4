@@ -23,7 +23,7 @@ struct s_noeud_t {
 
 
 //retourne l'adresse d'un noeud, en lui donnant une valeur et deux sous arbres
-noeud_t* add_n(int val, noeud_t* gauche, noeud_t* droite);
+noeud_t* add_t(int val, noeud_t* gauche, noeud_t* droite);
 
 //libère la mémoire de chaque noeud de l'arbre
 void cut_tree(noeud_t* tree);
@@ -80,7 +80,7 @@ void print_parenthèse(int n, int ouvrant);
 
 
 //retourne l'adresse d'un noeud, en lui donnant une valeur et deux sous arbres
-noeud_t* add_n(int val, noeud_t* gauche, noeud_t* droite) {
+noeud_t* add_t(int val, noeud_t* gauche, noeud_t* droite) {
 	noeud_t* tree = malloc(sizeof(noeud_t));
 	assert(tree);
 
@@ -153,7 +153,61 @@ int is_search_binary_tree(noeud_t* tree, int* min, int* max) {
 
 //retire une valeur de l'arbre, tout en conservant l'intégrité de l'ABR
 noeud_t* remove_val(noeud_t* tree, int val) {
-    return NULL;
+    if (tree == NULL)
+		return NULL;
+
+
+	//si la valeur est trouvée
+	if (tree->v == val) {
+		//si le noeud est une feuille...
+		//...on coupe
+		if (!tree->g && !tree->d) {
+			cut_tree(tree);
+			return NULL;
+		}
+
+		//si on a un arbre droit
+		//...on remplace la valeur de ce noeud...
+		//...par la plus petite de l'arbre droit
+		//...et on va supprimer cette nouvelle valeur dans l'arbre droit
+		if (tree->d) {
+			int min = min_of_tree(tree->d);
+			tree->v = min;
+			tree->d = remove_val(tree->d, min);
+		}
+
+		//si on a un arbre gauche
+		//...on remplace la valeur de ce noeud...
+		//...par la plus grande de l'arbre gauche
+		//...et on va supprimer cette nouvelle valeur dans l'arbre gauche
+		else if (tree->g) {
+			int max = min_of_tree(tree->g);
+			tree->v = max;
+			tree->g = remove_val(tree->g, max);
+		}
+	}
+
+	//si la valeur est plus grande que celle du noeud
+	//...si on n'a pas d'arbre droit, la valeur n'est pas dans l'arbre
+	//...sinon, on va dedans
+	else if (val > tree->v) {
+		if (!tree->d)
+			return tree;
+		
+		tree->d = remove_val(tree->d, val);
+	}
+
+	//si la valeur est plus petite que celle du noeud
+	//...si on n'a pas d'arbre gauche, la valeur n'est pas dans l'arbre
+	//...sinon, on va dedans
+	else {
+		if (!tree->g)
+			return tree;
+		
+		tree->g = remove_val(tree->g, val);
+	}
+
+	return tree;
 }
 
 

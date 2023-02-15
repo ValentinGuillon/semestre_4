@@ -9,7 +9,7 @@ struct s_noeud_t {
 };
 
 //retourne l'adresse d'un noeud, en lui donnant une valeur et deux sous arbres
-noeud_t* add_n(int val, noeud_t* gauche, noeud_t* droite);
+noeud_t* add_t(int val, noeud_t* gauche, noeud_t* droite);
 
 //libère la mémoire de chaque noeud de l'arbre
 void cut_tree(noeud_t* tree);
