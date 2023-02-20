@@ -23,7 +23,7 @@ struct s_noeud_t {
 
 
 //retourne l'adresse d'un noeud, en lui donnant une valeur et deux sous arbres
-noeud_t* add_n(int val, noeud_t* gauche, noeud_t* droite);
+noeud_t* add_t(int val, noeud_t* gauche, noeud_t* droite);
 
 //libère la mémoire de chaque noeud de l'arbre
 void cut_tree(noeud_t* tree);
@@ -40,6 +40,11 @@ int min_of_tree(noeud_t* tree);
 //retourne la plus grande valeur de l'arbre
 int max_of_tree(noeud_t* tree);
 
+
+//retourne la hauteur de l'arbre
+int hauteur(noeud_t* tree);
+
+int max(int a, int b);
 
 
 //affiche tout le sous-arbre gauche, puis le droit, en parcours préfixe
@@ -75,7 +80,7 @@ void print_parenthèse(int n, int ouvrant);
 
 
 //retourne l'adresse d'un noeud, en lui donnant une valeur et deux sous arbres
-noeud_t* add_n(int val, noeud_t* gauche, noeud_t* droite) {
+noeud_t* add_t(int val, noeud_t* gauche, noeud_t* droite) {
 	noeud_t* tree = malloc(sizeof(noeud_t));
 	assert(tree);
 
@@ -148,7 +153,61 @@ int is_search_binary_tree(noeud_t* tree, int* min, int* max) {
 
 //retire une valeur de l'arbre, tout en conservant l'intégrité de l'ABR
 noeud_t* remove_val(noeud_t* tree, int val) {
-    return NULL;
+    if (tree == NULL)
+		return NULL;
+
+
+	//si la valeur est trouvée
+	if (tree->v == val) {
+		//si le noeud est une feuille...
+		//...on coupe
+		if (!tree->g && !tree->d) {
+			cut_tree(tree);
+			return NULL;
+		}
+
+		//si on a un arbre droit
+		//...on remplace la valeur de ce noeud...
+		//...par la plus petite de l'arbre droit
+		//...et on va supprimer cette nouvelle valeur dans l'arbre droit
+		if (tree->d) {
+			int min = min_of_tree(tree->d);
+			tree->v = min;
+			tree->d = remove_val(tree->d, min);
+		}
+
+		//si on a un arbre gauche
+		//...on remplace la valeur de ce noeud...
+		//...par la plus grande de l'arbre gauche
+		//...et on va supprimer cette nouvelle valeur dans l'arbre gauche
+		else if (tree->g) {
+			int max = min_of_tree(tree->g);
+			tree->v = max;
+			tree->g = remove_val(tree->g, max);
+		}
+	}
+
+	//si la valeur est plus grande que celle du noeud
+	//...si on n'a pas d'arbre droit, la valeur n'est pas dans l'arbre
+	//...sinon, on va dedans
+	else if (val > tree->v) {
+		if (!tree->d)
+			return tree;
+		
+		tree->d = remove_val(tree->d, val);
+	}
+
+	//si la valeur est plus petite que celle du noeud
+	//...si on n'a pas d'arbre gauche, la valeur n'est pas dans l'arbre
+	//...sinon, on va dedans
+	else {
+		if (!tree->g)
+			return tree;
+		
+		tree->g = remove_val(tree->g, val);
+	}
+
+	return tree;
 }
 
 
@@ -209,9 +268,20 @@ int max_of_tree(noeud_t* tree) {
 
 
 
+int hauteur(noeud_t* tree) {
+	if (tree == NULL)
+		return -1;
+	
+	return 1 + max(hauteur(tree->g), hauteur(tree->d));
+}
 
 
 
+int max(int a, int b) {
+	if (a >= b)
+		return a;
+	return b;
+}
 
 
 
@@ -270,3 +340,79 @@ void print_parenthèse(int n, int ouvrant) {
 	}
 }
 
+
+
+// #define COMPACT
+
+int _print_t(noeud_t *arbre, int is_left, int offset, int depth, char s[20][255]) {
+    char b[20];
+    int width = 5;
+
+    if (!arbre) return 0;
+
+    sprintf(b, "(%03d)", arbre->v);
+
+    int g  = _print_t(arbre->g, 1, offset, depth + 1, s);
+    int d = _print_t(arbre->d, 0, offset + g + width, depth + 1, s);
+
+#ifdef COMPACT
+    for (int i = 0; i < width; i++)
+        s[depth][offset + g + i] = b[i];
+
+    if (depth && is_left) {
+
+        for (int i = 0; i < width + d; i++)
+            s[depth - 1][offset + g + width/2 + i] = '-';
+
+        s[depth - 1][offset + g + width/2] = '.';
+
+    } else if (depth && !is_left) {
+
+        for (int i = 0; i < g + width; i++)
+            s[depth - 1][offset - width/2 + i] = '-';
+
+        s[depth - 1][offset + g + width/2] = '.';
+    }
+#else
+    for (int i = 0; i < width; i++)
+        s[2 * depth][offset + g + i] = b[i];
+
+    if (depth && is_left) {
+
+        for (int i = 0; i < width + d; i++)
+            s[2 * depth - 1][offset + g + width/2 + i] = '-';
+
+        s[2 * depth - 1][offset + g + width/2] = '+';
+        s[2 * depth - 1][offset + g + width + d + width/2] = '+';
+
+    } else if (depth && !is_left) {
+
+        for (int i = 0; i < g + width; i++)
+            s[2 * depth - 1][offset - width/2 + i] = '-';
+
+        s[2 * depth - 1][offset + g + width/2] = '+';
+        s[2 * depth - 1][offset - width/2 - 1] = '+';
+    }
+#endif
+
+    return g + width + d;
+}
+
+void print_t(noeud_t *arbre) {
+    char s[20][255];
+    for (int i = 0; i < 20; i++)
+        sprintf(s[i], "%80s", " ");
+
+    _print_t(arbre, 0, 0, 0, s);
+
+	int h = hauteur(arbre);
+	int mult = 0;
+#ifdef COMPACT
+		mult = 2;
+#else 
+		mult = 3;
+#endif
+
+    for (int i = 0; i < (h*mult) - 1; i++)
+        printf("%s\n", s[i]);
+}

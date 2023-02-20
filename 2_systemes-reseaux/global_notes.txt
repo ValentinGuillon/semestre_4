@@ -1,0 +1,263 @@
+
+
+FORMULES:
+    - Temps transmission
+        T = Q / D
+        D = Q / T
+            T: temps de transmission (s)
+            Q: quantité (bit)
+            D: débit (bits/s)
+
+    - Délai de transfert
+        D = Tt + Tp + R
+            D: délai de transfert
+            Tt: temps de transmission
+            Tp: temps de propagation
+            R: retards (traitements)
+
+
+    - Débit binaire sans bruit (Nyquist)
+        D = 2B * log2(V)
+            D: débit binaire (bits/s)
+            B: bande passante (Hz)
+            V: valence
+            R = 2B: rapidité de modulation (Bauds)
+
+    - Débit binaire avec bruit (Shannon)
+        D = B * log2(1 + S/N)
+            D: débit binaire (bits/s)
+            B: bande passante (Hz)
+            S: puissance du signal
+            N: puissande du bruit
+            S/N: rapport signal/bruit (décibles dB)
+
+
+CODAGES DES SIGNAUX:
+    - Code en bande de base
+        0= null
+        1= positif
+    - NRZ
+        0= négatif
+        1= positif
+    - Bipolaire
+        0= null
+        1= opposé du précédent
+    - RZ
+        0= null
+        1= positif, puis null
+    - Biphasé (Manchester)
+        0= négatif, puis positif
+        1= positif, puis négatif
+    - Miller
+        0= précédent, MAIS opposé si précédent est zéro
+        1= précédent, puis opposé
+
+
+
+
+I Réseaux informatiques
+
+    1) Intro
+        Définition:
+            - réseau informatique (computer network):
+                Ensemble matériels/logiciels permettant à des machines de communiquer
+
+        Classification:
+            par étendue de la couverture géographique (croissant par taille):
+                - PAN (Personal Area Network) (mètres)
+                - LAN (Local ...) (un batiment)
+                - MAN (Metropolitan ...) (batiments)
+                - WAN (Wide ...) (ville, pays, monde)
+                - Internet (le plus grand WAN)
+
+            par topologie:
+                - Bus (reliées sur un câble coaxial)
+                    + simple à déployer
+                    - vulnérable si panne, lent
+                - Étoile (reliées à un point central)
+                    + machines indépendantes, réseau extensible
+                    - cher en câble, central cassé = tout cassé
+                - Anneau (reliées en forme de boucle)
+                    + signal bidirectionnel
+                    - un message vers une machine éteinte bloque le réseau
+                - Maillée (chaque reliées à plusieurs)
+                    + machines indépendantes, réseau robuste au panne
+                    - cher en câble
+                - Arbre (hiérarchie entre les machines)
+                    + gestion de grand réseau
+                    - une machine en panne = impacte les machines enfants
+                - Hybride (anneau + étoile)
+
+            par hiérarchie:
+                - client-serveur
+                    + simple, accès au données, sécurisé
+                    - cher
+                - poste à poste (peer-to-peer)
+                    + décentralisé, moins cher, pas de hiérarchie, anonymat
+                    - sécurité, partage illégal
+
+
+    2) Fonctionnement des réseaux
+        Transmission:
+            - TEMPS (s) = QUANTITÉ (bit) / DÉBIT (bits/s)
+            - Mode : Simplex, Half duplex, Full duplex
+            - sur marchine: en binaires
+            - sur cables et ondes hertziennes: par signaux
+
+        Commutation (switching): manière de faire passer l'info
+            - de circuits
+                Un chemin est défini au début et est réservé jusqu'à la fin
+            - de messages
+                Le message se propage de noeud en noeud, jusqu'à trouver un chemin dispo. Chaque noeud garde le message
+            - de paquets
+                L'info découpé en paquets qui passent de noeud à noeurd d'un bout à l'autre du réseau
+
+        Service de transport:
+            - orientée connexion
+                ~ allocation de ressources. Paquets envoyé à la suite en suivant le méme chemin
+                + transfert fiable. Congestion peu probable, retransmission des données perdues
+                - retard dans la transmission
+            - sans connexion
+                ~ Paquets envoyés ne suivent pas le même chemin
+                + transmission plus rapide
+                - Fiabilité de transfert non garantie. Congestion probable, pas de retransmission des données perdues
+
+        Modes d'envoi:
+            - Unicast: une source, une destination
+            - Multicast: une source, quelques noeuds destinations
+            - Broadcast: une source, toutes les cibles possibles
+
+        Protocoles:
+            Déf: ensemble de conventions définissant les échanges entre des entités qui coopère pour réaliser un service
+
+            Relation protocole/interfaces:
+                interface définit l'accès à un service
+                protocole définit la réalisation d'un services
+
+        Couches:
+            Modèles:
+                OSI (Open Systèmes Interconnetion):
+                    modèles théorique
+                TCP/IP:
+                    approche pratique. Modèle de réseau de référence pour Internet
+                
+                    TPC:
+                        définit la manière dont les applis créent des canaux de comm fiables dans le réseau
+                    IP:
+                        définit la manière dont les machines se transmettent les données
+
+                Couches ISO:
+                    7 Application (datagramme)
+                        = apporte à l'user les services de base offerts pas le réseau
+                        - app standards: FTP, SMTP, WEB...
+                        - terminaux virtuels
+
+                    6 Présentation (datagramme)
+                        = permet la manip d'objets typés
+                        = fournis une présentation standard de ces objets
+                        - déf notation abstraite des objets typés
+                        - compression / cryptage
+
+                    5 Session (datagramme)
+                        = fourni ensemble de services pour la coordination des app
+                        - connexion entre les app
+                        - déf des points de synchro en cas d'erreur
+
+                    4 Transport (segment)
+                        (trame = en tete (TCP/UDP) + données)
+                        = acheminement de bout en bout
+                        - fragmentation en paquets et les regroupent
+
+                    3 Réseau (paquet (packet))
+                        (trame = en tete (IP) + en tete (TCP/UDP) + données)
+                        = achemine les messages dans le réseau
+                        - routage (determine le chemin du parcours)
+                        - commutation des paquets dans le réseau
+
+                    2 Liaison (trame (frame))
+                        = assure une transmission fiable
+                        = détecte/corrige erreurs des couches inférieurs
+                        - transforme données en trame
+                        - contrôle des données en trame
+                        - déf règles de synchro
+
+                    1 Physique (bit)
+                        = assure transmission entre entités physiques ETTD/ETCD
+                            ETTD: ... traitement de données
+                            ETDC: ... circuit de données
+                        - nature et caract du moyen de comm
+                        - mode de transmission
+                        - choix du codage de bits
+                        - tensions et fréquence utilisé
+
+
+                Couches TCP/IP:
+                    4 Application  (app, prés, sess de OSI)
+                        = fournis les protocoles de haut niveau
+
+                    3 Transport
+                        = détermine comment onvoyer les données
+
+                    2 Internet (réseau de OSI)
+                        = assure la transmi des paquets de A à B
+
+                    1 Accès réseau (physique et liaison de OSI)
+                        = fourni le moyen de délivrer des données aux systèmes rattachés au réseau
+
+
+    3) Couches physiques
+
+    ...
+
+
+        Transmission:
+            débit binaire sans bruit (Nyquist)
+                D = 2B * log2(V)
+            
+            débit binaire avec bruit (Shannon)
+                D = B * log2(1 + S/N)
+
+
+        Codage des signaux:
+            - Code en bande de base
+                0= null
+                1= positif
+                      0  1  0  0  1  1  0
+                    +|  |--|  |  |--|--|  |
+                    0|--|  |--|--|  |  |--|
+                    -|  |  |  |  |  |  |  |
+            - NRZ
+                0= négatif
+                1= positif
+                      0  1  0  0  1  1  0
+                    +|  |--|  |  |--|--|  |
+                    0|  |  |  |  |  |  |  |
+                    -|--|  |--|--|  |  |--|
+            - Bipolaire
+                0= null
+                1= opposé du précédent
+                      0  1  0  0  1  1  0
+                    +|  |--|  |  |  |--|  |
+                    0|--|  |--|--|  |  |--|
+                    -|  |  |  |  |--|  |  |
+            - RZ
+                0= null
+                1= positif, puis null
+                      0  1  0  0  1  1  0
+                    +|  |- |  |  |- |- |  |
+                    0|--| -|--|--| -| -| -|
+                    -|  |  |  |  |  |  |  |
+            - Biphasé (Manchester)
+                0= négatif, puis positif
+                1= positif, puis négatif
+                      0  1  0  0  1  1  0
+                    +| -|- | -| -|- |- | -|
+                    0|  |  |  |  |  |  |  |
+                    -|- | -|- |- | -| -|- |
+            - Miller
+                0= précédent, MAIS opposé si précédent est zéro
+                1= précédent, puis opposé
+                      0  1  0  0  1  1  0
+                    +|--|- |  |--|- | -|--|
+                    0|  |  |  |  |  |  |  |
+                    -|  | -|--|  | -|- |  |
