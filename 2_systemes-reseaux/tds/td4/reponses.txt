@@ -1,0 +1,61 @@
+Valentin GUILLON 20002588, L2-X
+
+Systèmes et réseaux:
+
+TD4:
+
+	Questions de cours:
+		1. b Faux
+		2. a, b et c
+		3. a 16
+		4. b NRZ
+		5. c machine destination
+		6. c 
+		7. a et c
+		8. b 
+
+
+	Exo 1:
+		adresse de la machine : 156.55.28.152
+		1. réponse: classe B
+			156(10) = 1001 1100(2)
+			10 => classe B
+
+		2. réponse: 255.255.000.000
+			classe B, donc 16 bits pour le réseau
+			255.255.000.000
+
+		3. réponse: 156.55.255.255
+			(partie réseau: 156.55, et le reste en full 1)
+
+		mtn on va utilisé 10 bits pour la partie réseau
+		1. réponse: 255.255.240
+			11111111 11111111 11110000 00000000
+			255      255      240      000
+
+		2. réponse: 131 072
+			classe C, donc
+			2^(n - 3)
+			n: nb de bits pour le réseau
+			2^(20 - 3)
+			131072
+
+
+		3. réponse: 4094
+			2^n -2
+			n = nb de bits pour la machine
+			n = 12
+			2^12 - 2
+			4096-2
+			4094
+
+
+
+	Exo 2:
+		1. réponse: classe C
+			169(10) = 11000010(2)
+			110 => classe C
+
+		2.
+
+
