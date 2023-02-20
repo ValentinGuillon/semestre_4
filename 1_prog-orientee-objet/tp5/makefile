@@ -1,0 +1,121 @@
+
+COMMENT = \##mettre \# pour ne pas exécuter certain "echo", et ne rien mettre pour les exécuter
+SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
+
+
+
+COURS = POO
+DEVOIR = TP5
+PROGRAMMER = GUILLON-Valentin-20002588
+
+SRC = src/
+INCLUDE = include/
+
+CC = g++ #gcc or g++
+DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
+FILESFORDIST = makefile tp05.pdf exo1.cpp
+
+
+COLOR_CLOSE = \033[0m
+COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
+COLOR_SECOND_OPEN = $(COLOR_CLOSE)\033[38;2;0;255;255m
+CFLAGS = -Wall -Wextra -g -std=c++17
+PROGS = exo1
+
+
+# exemple:
+# 	@$(COMMENT)echo "On va compiler exo"
+# 	# $(SHOW)$(CC) $(CFLAGS) exo.c -o exo
+# 	@echo "$(COLOR_OPEN)Compilation de exo$(COLOR_CLOSE)"
+
+
+all: clean $(PROGS)
+
+
+
+exo1: vector.o
+	$(SHOW)$(CC) $(FLAGS) $(SRC)vector.o -I$(INCLUDE) exo1.cpp -o exo1
+	$(SHOW)find . -name "*.a" -delete
+	@echo "$(COLOR_OPEN)Compilation de exo1$(COLOR_CLOSE)"
+
+vector.o:
+	$(SHOW)$(CC) -I$(INCLUDE) -c $(SRC)vector.cpp -o $(SRC)vector.o
+
+
+
+
+
+distdir: 
+	$(SHOW)if [ -d $(DISTDIRNAME) ]; then rm -rf $(DISTDIRNAME); fi
+	$(SHOW)mkdir $(DISTDIRNAME)
+	$(SHOW)cp $(FILESFORDIST) $(DISTDIRNAME)
+	$(SHOW)if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTDIRNAME); fi
+	$(SHOW)if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTDIRNAME); fi
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Regroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
+
+dist: clean distdir
+	$(SHOW)rm -f [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de l'archive [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip$(COLOR_CLOSE)"
+	$(SHOW)zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTDIRNAME)
+	@echo "$(COLOR_OPEN)Création du .zip terminée$(COLOR_CLOSE)"
+	$(SHOW)rm -rf $(DISTDIRNAME)
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression du dir $(DISTDIRNAME)$(COLOR_CLOSE)"
+
+
+clean:
+	$(SHOW)find . -name "*.o" -delete
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de tous les .o$(COLOR_CLOSE)"
+	$(SHOW)rm -f $(PROGS)
+	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de $(PROGS)$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)Nettoyage terminé !$(COLOR_CLOSE)"
+
+
+
+
+
+# ===============================================
+# =============== FIN DU MAKEFILE ===============
+# ===============================================
+
+
+
+
+# processus pour compiler avec un fichier source et un header
+# (ex: exo.c, src/fonctions.c et include/fonctions.h)
+# FILESFORDIST = ... exo.c
+# PROGS = ... exo
+
+# exo: fonctions.o
+# #on compile exo.c en y incluant $(SRC)fonctions.o
+# #-I<nom_chemin>, permet d'indiquer où est le header (.h) de $(SRC)fonctions.c
+# 	$(CC) $(CFLAGS) $(SRC)fonctions.o -I$(INCLUDE) exo.c -o exo
+
+# fonctions.o:
+# #génération de l'objet $(SRC)fonctions.o
+# 	$(CC) $(CFLAGS) -c $(SRC)fonctions.c -o $(SRC)fonctions.o
+
+
+# ou, plus concis, avec une dépendance implicite (rappel: $^== dépendances de la cible actuel)
+# exo: $(SRC)fonctions.o
+# 	$(CC) $(CFLAGS) $^ -I$(INCLUDE) exo.c -o exo
+
+
+
+
+
+
+
+# processus pour compiler avec une librairie statique (.a)
+# (ex: exo.c, src/fonctions.c et include/fonctions.h)
+# FILESFORDIST = ... exo.c
+# PROGS = ... exo
+
+# exo: fonctions.a
+# # création de l'éxécutable avec la librairie créé dans la cible libfonctions.a
+# # puis suppression de celle-ci
+# # options de la compilation; -I<dossier des .h> -L<dossier de la lib> (.a)> -l<nom de la lib> (à noter que la lib doit obligatoirement s'appeler "lib<nom>.a")
+# 	$(CC) $(FLAGS) exo.c -I$(INCLUDE) -L. -lfonctions -o exo
+
+# fonctions.a:
+# 	$(CC) -c $(SRC)fonctions.c
+# 	ar -rsc libfonctions.a fonctions.o
