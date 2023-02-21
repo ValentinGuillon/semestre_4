@@ -13,14 +13,14 @@ INCLUDE = include/
 
 CC = g++ #gcc or g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = makefile tp05.pdf exo1.cpp
+FILESFORDIST = makefile tp05.pdf exo1.cpp exo2.xpp
 
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
 COLOR_SECOND_OPEN = $(COLOR_CLOSE)\033[38;2;0;255;255m
 CFLAGS = -Wall -Wextra -g -std=c++17
-PROGS = exo1
+PROGS = exo1 exo2
 
 
 # exemple:
@@ -30,18 +30,31 @@ PROGS = exo1
 
 
 all: clean $(PROGS)
+	@echo "$(COLOR_OPEN)!!! exo1: int*vector_t NON-FAIT$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)!!! exo1: question de fin non répondu$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)!!! exo1: 1 (une) erreur trouvée avec valgrind$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)!!! exo1: penser à changer les fonctions en const$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)!!! exo2: PAS FINI$(COLOR_CLOSE)"
 
 
 
 exo1: vector.o
-	$(SHOW)$(CC) $(FLAGS) $(SRC)vector.o -I$(INCLUDE) exo1.cpp -o exo1
-	$(SHOW)find . -name "*.a" -delete
+	$(SHOW)$(CC) $(FLAGS) -I$(INCLUDE) $^  exo1.cpp -o exo1
+	$(SHOW)find . -name "*.o" -delete
 	@echo "$(COLOR_OPEN)Compilation de exo1$(COLOR_CLOSE)"
 
 vector.o:
-	$(SHOW)$(CC) -I$(INCLUDE) -c $(SRC)vector.cpp -o $(SRC)vector.o
+	$(SHOW)$(CC) -I$(INCLUDE) -c $(SRC)vector.cpp -o vector.o
 
 
+
+exo2: chaine.o
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo2.cpp -o exo2
+	$(SHOW)find . -name "*.o" -delete
+	@echo "$(COLOR_OPEN)Compilation de exo2$(COLOR_CLOSE)"
+
+chaine.o:
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)chaine.cpp -o chaine.o
 
 
 

@@ -9,13 +9,6 @@ using namespace std;
 
 
 
-void vector_t::fill_tab(void){
-	for (int i = 0; i < this->size; i++)
-		this->tab[i] = 0;
-}
-
-
-
 vector_t::vector_t(int size) {
 			this->size = size;
 			this->tab = (int*)malloc(sizeof(int) * size);
@@ -24,6 +17,26 @@ vector_t::vector_t(int size) {
 
 vector_t::~vector_t(void) {
 			free(this->tab);
+}
+
+
+
+
+void vector_t::fill_tab (void){
+	for (int i = 0; i < this->size; i++)
+		this->tab[i] = 0;
+}
+
+
+
+
+void vector_t::print_tab(void) {
+	cout<<"[";
+	for (int i = 0; i < this->size - 1; i++) {
+		cout<<this->tab[i]<<", ";
+	}
+
+	cout<<this->tab[this->size -1]<<"]";
 }
 
 
@@ -72,20 +85,21 @@ vector_t vector_t::operator *(int value) {
 	vector_t new_vect{this->size};
 
 	for (int i = 0; i < this->size; i++) {
-			new_vect[i] = this->tab[i] * value;
+		new_vect[i] = this->tab[i] * value;
 	}
 
 	return new_vect;
 }
 
-vector_t vector_t:: * operator(int value) {
-	vector_t new_vect{this->size};
+// vector_t vector_t:: * operator(int value) {
+// 	vector_t new_vect{this->size};
 
-	for (int i = 0; i < this->size; i++) {
-			new_vect[i] = this->tab[i] * value;
-	}
+// 	for (int i = 0; i < this->size; i++) {
+// 		new_vect[i] = this->tab[i] * value;
+// 	}
 
-	return new_vect;
-}
+// 	return new_vect;
+// }
+
 
 
