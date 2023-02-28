@@ -1,5 +1,4 @@
 
-COMMENT = \# #mettre \# pour ne pas exécuter certain "echo", et ne rien mettre pour les exécuter
 SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
 
 
@@ -18,13 +17,11 @@ FILESFORDIST = makefile
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
-COLOR_SECOND_OPEN = $(COLOR_CLOSE)\033[38;2;0;255;255m
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra -g #-std=c++17
 PROGS = 
 
 
 # exemple:
-# 	@$(COMMENT)echo "On va compiler exo"
 # 	# $(SHOW)$(CC) $(CFLAGS) exo.c -o exo
 # 	@echo "$(COLOR_OPEN)Compilation de exo$(COLOR_CLOSE)"
 
@@ -43,22 +40,17 @@ distdir:
 	$(SHOW)cp $(FILESFORDIST) $(DISTDIRNAME)
 	$(SHOW)if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTDIRNAME); fi
 	$(SHOW)if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTDIRNAME); fi
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Regroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
 
 dist: clean distdir
 	$(SHOW)rm -f [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de l'archive [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip$(COLOR_CLOSE)"
 	$(SHOW)zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTDIRNAME)
 	@echo "$(COLOR_OPEN)Création du .zip terminée$(COLOR_CLOSE)"
 	$(SHOW)rm -rf $(DISTDIRNAME)
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression du dir $(DISTDIRNAME)$(COLOR_CLOSE)"
 
 
 clean:
 	$(SHOW)find . -name "*.o" -delete
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de tous les .o$(COLOR_CLOSE)"
 	$(SHOW)rm -f $(PROGS)
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de $(PROGS)$(COLOR_CLOSE)"
 	@echo "$(COLOR_OPEN)Nettoyage terminé !$(COLOR_CLOSE)"
 
 
