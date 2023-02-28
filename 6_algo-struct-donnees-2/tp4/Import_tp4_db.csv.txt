@@ -1,0 +1,17 @@
+Pour importer la base de contacts, vous devez :
+
+	- déclarer le main de votre programme principal de la manière suivante :
+
+int main(int argc, char *argv[]) 
+
+	- exécuter votre programme avec le nom du fichier en argument :  ./tp4 tp4_db.csv
+	- accèder au nom du fichier passé en argument grâce à argv[1], par exemple :
+
+liste = ajout_db_liste(argv[1], liste);
+
+Dans gdb, le passage de l'argument se fait à l'intérieur de gdb :
+
+$ gdb ./tp4
+
+(gdb) r tp4_db.csv
+

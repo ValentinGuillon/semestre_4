@@ -1,0 +1,30 @@
+char* getfield(char* line, int num){
+	/* parse la ligne `line` selon le 
+	   séparateur ';' et renvoie le champ
+	   `num` */
+    char* tok;
+    for (tok = strtok(line, ";");
+            tok && *tok;
+            tok = strtok(NULL, ";\n"))
+    {
+        if (!--num)
+            return tok;
+    }
+    return NULL;
+}
+
+
+contact* ajout_db_liste(char *file_name, contact* liste){
+	// lecture du fichier 
+	FILE* stream = fopen(file_name, "r");
+	// ligne limitée à 1024 caractères 
+	char line[1024];
+	while (fgets(line, 1024, stream))
+	{
+	    char* tmp = strdup(line);
+		liste = ajouter_liste(liste, getfield(tmp, 1), getfield(tmp, 2));
+	    free(tmp);
+	}
+	return liste;
+}
+
