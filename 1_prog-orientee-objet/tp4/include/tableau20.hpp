@@ -13,6 +13,7 @@ class tableau20_t {
 
     public:
         tableau20_t (void);
+        /*tableau20_t (void);*/
 
         friend ostream &operator<<(ostream &out, tableau20_t &tabl) {
             out<<"[";
@@ -29,10 +30,10 @@ class tableau20_t {
         //définition de l'opérateur [] (call ex: tab[5])
         int & operator[] (int index);
 
-        void operator= (tableau20_t tab);
+        /*tableau20_t & operator= (const tableau20_t &other_tab);*/
 
         //somme des var des deux tableaux
-        tableau20_t operator+ (tableau20_t tab) const;
+        tableau20_t operator+ (const tableau20_t &other_tab) const;
 };
 
 

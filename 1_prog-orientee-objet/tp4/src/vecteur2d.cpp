@@ -21,7 +21,9 @@ vecteur2d_t::vecteur2d_t (float a, float b) {
 
 
 
-
+ostream &operator<<(ostream &out, vecteur2d_t &vec) {
+    return out<<"{x:"<<vec.x<<", y:"<<vec.y<<"}";
+}
 
 vecteur2d_t vecteur2d_t::operator+ (vecteur2d_t vec) {
     // float new_x, new_y;

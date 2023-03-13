@@ -15,10 +15,7 @@ class vecteur2d_t {
         vecteur2d_t (void);
         vecteur2d_t (float a, float b);
 
-
-        friend ostream &operator<<(ostream &out, vecteur2d_t &vec) {
-            return out<<"{x:"<<vec.x<<", y:"<<vec.y<<"}";
-        }
+        friend ostream &operator<<(ostream &out, vecteur2d_t &vec);
 
         vecteur2d_t operator+ (vecteur2d_t vec);
         vecteur2d_t operator* (float multiplier);

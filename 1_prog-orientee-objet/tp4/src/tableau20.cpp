@@ -41,20 +41,22 @@ int & tableau20_t::operator[] (int index) {
     return this->tab[index];
 }
 
-
-void tableau20_t::operator= (tableau20_t other_tab) {
+/*
+tableau20_t & tableau20_t::operator= (const tableau20_t &other_tab) {
     for (int i = 0; i < TAILLE; i++)
-        this->tab[i] = other_tab[i];
-}
+        this->tab[i] = other_tab.tab[i];
+
+    return *this;
+}*/
 
 
 //somme des var des deux tableaux
-tableau20_t tableau20_t::operator+ (tableau20_t other_tab) const {
+tableau20_t tableau20_t::operator+ (const tableau20_t &other_tab) const {
     tableau20_t somme;
 
     for (int i = 0; i < TAILLE; i++)
-        somme[i] = other_tab[i] + tab[i];
-    
+        somme[i] = other_tab.tab[i] + this->tab[i];
+
     return somme;
 }
 

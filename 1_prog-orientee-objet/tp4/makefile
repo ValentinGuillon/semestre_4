@@ -18,7 +18,7 @@ FILESFORDIST = makefile -r tp_documents/ exo1.cpp exo2.cpp
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
 CFLAGS = -Wall -Wextra -g -std=c++17
-PROGS = exo3
+PROGS = exo3 #exo3
 
 
 # exemple:
