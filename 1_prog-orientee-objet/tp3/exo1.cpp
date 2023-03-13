@@ -1,6 +1,6 @@
 
 #include<iostream>
-#include<assert.h>
+#include<cassert>
 
 
 
@@ -18,14 +18,14 @@ class Interv
 	int interv_est_vide = 0; //bool
 
 	public:
-		Interv(double a, double b = 0);
-		// Interv(double a);
+		Interv(double a, double b);
+		Interv(double a);
 		Interv(void);
 
 		friend ostream &operator<<(ostream &out, Interv obj)
 		{
 			if (obj.estVide())
-				return out<<"[-0-]";
+				return out<<"{}";
 			return out<<"["<<obj.borne_min<<"; "<<obj.borne_max<<"]";
 		}
 
@@ -61,6 +61,7 @@ int main(void)
 
 
 	//appartient
+
 	for (int i = 0; i < 3; i++)
 	{
 		if (a.appartient(i+3))
@@ -70,7 +71,15 @@ int main(void)
 	}
 
 	//intersection
-	cout<<"Intersection de A et D = "<<a.intersec(b)<<endl;
+	Interv test = a.intersec(d);
+	assert(test.appartient(6.1));
+	assert(test.appartient(7.9));
+	assert(!test.appartient(5.9));
+	assert(!test.appartient(9.1));
+
+
+	
+	cout<<"Intersection de A et D = "<<a.intersec(d)<<endl;
 	cout<<"Intersection de D et E = "<<d.intersec(e)<<endl;
 
 	//union
@@ -79,7 +88,7 @@ int main(void)
 	cout<<"Union de A et E = "<<a.uni(e)<<endl;
 
 	cout<<"Inter de "<<Interv{1, 3}<<" et "<<Interv{2, 4}<<" = "<<Interv{1, 3}.intersec(Interv{2, 4})<<endl;
-	cout<<"Union de "<<Interv{-2, -1}<<" et "<<Interv{1, 2}<<" = "<<Interv{1, 3}.uni(Interv{1, 2})<<endl;
+	cout<<"Union de "<<Interv{-2, -1}<<" et "<<Interv{1, 2}<<" = "<<Interv{-2, -1}.uni(Interv{1, 2})<<endl;
 
 
 	return 0;
@@ -95,13 +104,13 @@ int main(void)
 
 int min(double a, double b)
 {
-	if (a < b) return b;
+	if (a > b) return b;
 	return a;
 }
 
 int max(double a, double b)
 {
-	if (a > b) return b;
+	if (a < b) return b;
 	return a;
 }
 
@@ -126,14 +135,13 @@ Interv::Interv(void)
 {
 	//ptdr je ne sais pas comment décrire un intervalle
 	this->interv_est_vide = 1;
-	return;
 }
 
-// Interv::Interv(double a)
-// {
-// 	this->borne_min = a;
-// 	this->borne_max = a;
-// }
+Interv::Interv(double a)
+{
+	this->borne_min = a;
+	this->borne_max = a;
+}
 
 
 
@@ -159,22 +167,26 @@ Interv Interv::intersec(Interv b)
 	//*this est strictement inférieur à b
 	int cas2 = this->borne_max < b.borne_min;
 	//*this est strictement supérieur à b
-	int cas3 = this->borne_min > b.borne_min;
-
+	int cas3 = this->borne_min > b.borne_max;
+/*
 	cout<<endl<<"test intersection entre "<<*this<<" et "<<b<<":"<<endl;
 	cout<<"cas1="<<cas1<<", cas2="<<cas2<<", cas3="<<cas3<<endl;
-
+*/
 	//un des deux Interv est vide
 	if (cas1 || cas2 || cas3)
 		return Interv{};
 
-
+/*
 	//ici il y'a a obligatoirement un intervalle
 	//regardons si a est plus faible
 	if (this->borne_min <= b.borne_min)
 		return Interv(b.borne_min, this->borne_max);
 	else
-		return Interv(b.borne_min, this->borne_max);
+		return Interv(this->borne_min, b.borne_max);
+*/
+
+	return Interv(max(this->borne_min, b.borne_min), min(this->borne_max, b.borne_max));
+
 
 }
 
@@ -189,13 +201,15 @@ Interv Interv::uni(Interv b)
 		// throw 1;
 	}
 
-
+/*
 	if (this->borne_max < b.borne_min)
 	{
 		cout<<"Impossible d'unir "<<*this<<" et "<<b<<" avec la classe actuel"<<endl;
 		return Interv{};
 		// throw 1;
 	}
+*/
+
 
 	return Interv(min(this->borne_min, b.borne_min), max(this->borne_max, b.borne_max));
 }

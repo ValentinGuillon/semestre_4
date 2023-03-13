@@ -17,8 +17,8 @@ FILESFORDIST = makefile tp03.pdf exo1.cpp exo2.cpp exo3.cpp exo4.cpp
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
-CFLAGS = -Wall -Wextra -g -std=c++17
-PROGS = exo4
+CFLAGS = -Wall -Wextra -g -std=c++17 -fsanitize=address
+PROGS = exo1 exo2 exo3 exo4
 
 
 # exemple:
@@ -27,7 +27,6 @@ PROGS = exo4
 
 
 all: clean $(PROGS)
-	@echo "$(COLOR_OPEN)!!! exo1 à corriger$(COLOR_CLOSE)"
 
 
 # cible: dependance
