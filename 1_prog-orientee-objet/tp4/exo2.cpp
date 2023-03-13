@@ -1,4 +1,6 @@
 
+//tests sur la class vecteur20_t
+
 #include<vecteur2d.hpp>
 #include<iostream>
 
@@ -7,6 +9,7 @@ using namespace std;
 
 
 int main(void) {
+    cout<<"==== TEST DE class vecteur2d_t ====\n"<<endl;
     //initialisation
     vecteur2d_t a{-1.2, 2.1};
     vecteur2d_t b{1.1, 4.8};
@@ -19,14 +22,13 @@ int main(void) {
 
 
     //affichage
-    cout<<"a = "<<endl<<"    "; a.print_vec(); cout<<endl;
-    cout<<"b = "<<endl<<"    "; b.print_vec(); cout<<endl;
+    cout<<"a = "<<endl<<"    "<<a<<endl;
+    cout<<"b = "<<endl<<"    "<<b<<endl;
     cout<<"x = "<<endl<<"    "<<x<<endl<<endl;
 
-    cout<<"a+b ="<<endl<<"    "; somme_ab.print_vec(); cout<<endl;
-    cout<<"a*x ="<<endl<<"    "; produit_ax.print_vec(); cout<<endl;
+    cout<<"a+b ="<<endl<<"    "<<somme_ab<<endl;
+    cout<<"a*x ="<<endl<<"    "<<produit_ax<<endl;
     cout<<"a||x ="<<endl<<"    "<<scalaire_ab<<endl;
-
 
     return 0;
 }

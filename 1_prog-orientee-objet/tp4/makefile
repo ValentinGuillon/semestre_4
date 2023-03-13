@@ -12,13 +12,13 @@ INCLUDE = include/
 
 CC = g++ #gcc or g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = makefile exo2.cpp
+FILESFORDIST = makefile -r tp_documents/ exo1.cpp exo2.cpp
 
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
 CFLAGS = -Wall -Wextra -g -std=c++17
-PROGS = exo2
+PROGS = exo3
 
 
 # exemple:
@@ -26,17 +26,35 @@ PROGS = exo2
 # 	@echo "$(COLOR_OPEN)Compilation de exo$(COLOR_CLOSE)"
 
 
-all: clean $(PROGS)
-	@echo "$(COLOR_OPEN)Exo 1 NON FAIT$(COLOR_CLOSE)"
+all: clean $(PROGS) clean_soft
+	@echo "$(COLOR_OPEN)!!! exo3 non fini$(COLOR_CLOSE)"
+
+
+
+
+exo1:
+	$(SHOW)$(CC) $(CFLAGS) exo1.cpp -o exo1
+
 
 
 exo2: vecteur2d.o
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo2.cpp -o exo2
 	@echo "$(COLOR_OPEN)Compilation de exo2$(COLOR_CLOSE)"
-	$(SHOW)find . -name "*.o" -delete
 
 vecteur2d.o:
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)vecteur2d.cpp -o vecteur2d.o
+
+
+
+
+exo3: tableau20.o
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo3.cpp -o exo3
+	@echo "$(COLOR_OPEN)Compilation de exo3$(COLOR_CLOSE)"
+
+tableau20.o:
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)tableau20.cpp -o tableau20.o
+
+
 
 
 
@@ -54,6 +72,9 @@ dist: clean distdir
 	@echo "$(COLOR_OPEN)Création du .zip terminée$(COLOR_CLOSE)"
 	$(SHOW)rm -rf $(DISTDIRNAME)
 
+
+clean_soft:
+	$(SHOW)find . -name "*.o" -delete
 
 clean:
 	$(SHOW)find . -name "*.o" -delete

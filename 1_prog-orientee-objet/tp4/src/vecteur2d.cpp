@@ -1,4 +1,7 @@
 
+//définition d'une classe décrivant un vecteur2D
+//définition des opérateurs: +, *, || 
+
 #include<vecteur2d.hpp>
 #include<iostream>
 
@@ -17,9 +20,6 @@ vecteur2d_t::vecteur2d_t (float a, float b) {
 
 
 
-void vecteur2d_t::print_vec (void) {
-    cout<<"{x:"<<this->x<<", y:"<<this->y<<"}";
-}
 
 
 
