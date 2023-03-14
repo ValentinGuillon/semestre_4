@@ -1,19 +1,29 @@
 
-#include<iostream>
-#include<cstdlib>
 #include<vector.hpp>
 
+#include<iostream>
+#include<cstdlib>
 
 using namespace std;
 
 
 
 
-vector_t::vector_t(int size) {
+vector_t::vector_t(int size)
+{
 			this->size = size;
 			this->tab = (int*)malloc(sizeof(int) * size);
-			fill_tab();
+			init_tab();
 }
+
+
+vector_t::vector_t (vector_t const &obj)
+{
+	this->size = obj.size;
+	this->tab = (int*)malloc(sizeof(int) * this->size);
+	init_tab();
+}
+
 
 vector_t::~vector_t(void) {
 			free(this->tab);
@@ -22,37 +32,39 @@ vector_t::~vector_t(void) {
 
 
 
-void vector_t::fill_tab (void){
+
+void vector_t::init_tab (void){
 	for (int i = 0; i < this->size; i++)
 		this->tab[i] = 0;
 }
 
 
-
-
-void vector_t::print_tab(void) {
-	cout<<"[";
-	for (int i = 0; i < this->size - 1; i++) {
-		cout<<this->tab[i]<<", ";
+ostream &operator<<(std::ostream &out, vector_t &obj)
+{
+	out<<"[";
+	for (int i = 0; i < obj.size - 1; i++) {
+		out<<obj.tab[i]<<", ";
 	}
 
-	cout<<this->tab[this->size -1]<<"]";
+	return out<<obj.tab[obj.size]<<"]";
 }
 
+// void vector_t::print_tab(void) {
+// 	cout<<"[";
+// 	for (int i = 0; i < this->size - 1; i++) {
+// 		cout<<this->tab[i]<<", ";
+// 	}
 
-int & vector_t::operator[](int index) {
+// 	cout<<this->tab[this->size -1]<<"]";
+// }
+
+
+
+int & vector_t::operator [] (int const index) const
+{
 	//si index trop grand, error
-	if (index > size) {
+	if (index > this->size)
 		throw 1;
-	}
-
-	//index négatif
-	if (index < 0) {
-		//si la taille du tableau + index est négatif, error
-		if (size + index < 0)
-			throw "ntm";
-		return this->tab[size + index];
-	}
 
 	return this->tab[index];
 }
@@ -60,46 +72,54 @@ int & vector_t::operator[](int index) {
 
 
 
-int vector_t::max(void) {
+
+int vector_t::max (void) const
+{
 	int max = this->tab[0];
-	for (int i = 0; i < this->size; i++) {
-		if (tab[i] > max)
-			max = tab[i];
+
+	for (int i = 1; i < this->size; i++)
+	{
+		if (this->tab[i] > max)
+			max = this->tab[i];
 	}
+
 	return max;
 }
 
 
-int vector_t::min(void) {
+int vector_t::min (void) const
+{
 	int min = this->tab[0];
-	for (int i = 0; i < this->size; i++) {
-		if (tab[i] < min)
-			min = tab[i];
+
+	for (int i = 1; i < this->size; i++) {
+		if (this->tab[i] < min)
+			min = this->tab[i];
 	}
+
 	return min;
 }
 
 
 
-vector_t vector_t::operator *(int value) {
+vector_t vector_t::operator * (int const multiplier)
+{
 	vector_t new_vect{this->size};
 
 	for (int i = 0; i < this->size; i++) {
-		new_vect[i] = this->tab[i] * value;
+		new_vect.tab[i] = this->tab[i] * multiplier;
 	}
 
 	return new_vect;
 }
 
-// vector_t vector_t:: * operator(int value) {
-// 	vector_t new_vect{this->size};
+vector_t operator * (int const multiplier, vector_t const &obj)
+{
+	vector_t new_vect = obj;
 
-// 	for (int i = 0; i < this->size; i++) {
-// 		new_vect[i] = this->tab[i] * value;
-// 	}
+	for (int i = 0; i < new_vect.size; i++) {
+		new_vect.tab[i] = new_vect.tab[i] * multiplier;
+	}
 
-// 	return new_vect;
-// }
-
-
+	return new_vect;
+}
 

@@ -1,46 +1,39 @@
 
-COMMENT = \##mettre \# pour ne pas exécuter certain "echo", et ne rien mettre pour les exécuter
 SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
 
 
 
-COURS = POO
-DEVOIR = TP5
+COURS = nom_du_cours
+DEVOIR = devoir_x
 PROGRAMMER = GUILLON-Valentin-20002588
 
 SRC = src/
 INCLUDE = include/
 
-CC = g++ #gcc or g++
+CC = g++#gcc or g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = makefile tp05.pdf exo1.cpp exo2.xpp
+FILESFORDIST = makefile tp05.pdf exo1.cpp exo2.cpp
 
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
-COLOR_SECOND_OPEN = $(COLOR_CLOSE)\033[38;2;0;255;255m
-CFLAGS = -Wall -Wextra -g -std=c++17
-PROGS = exo1 exo2
+CFLAGS = -Wall -Wextra -g  -fsanitize=address -std=c++17
+PROGS = exo2
 
 
 # exemple:
-# 	@$(COMMENT)echo "On va compiler exo"
 # 	# $(SHOW)$(CC) $(CFLAGS) exo.c -o exo
 # 	@echo "$(COLOR_OPEN)Compilation de exo$(COLOR_CLOSE)"
 
 
-all: clean $(PROGS)
-	@echo "$(COLOR_OPEN)!!! exo1: int*vector_t NON-FAIT$(COLOR_CLOSE)"
-	@echo "$(COLOR_OPEN)!!! exo1: question de fin non répondu$(COLOR_CLOSE)"
-	@echo "$(COLOR_OPEN)!!! exo1: 1 (une) erreur trouvée avec valgrind$(COLOR_CLOSE)"
-	@echo "$(COLOR_OPEN)!!! exo1: penser à changer les fonctions en const$(COLOR_CLOSE)"
-	@echo "$(COLOR_OPEN)!!! exo2: PAS FINI$(COLOR_CLOSE)"
+all: clean $(PROGS) clean_soft
+	@echo "$(COLOR_OPEN)!!! exo1: ERROR \"free(): double free detected in tcache 2\"$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)!!! exo2: définir les fonctions dans chaine.cpp$(COLOR_CLOSE)"
 
 
 
 exo1: vector.o
 	$(SHOW)$(CC) $(FLAGS) -I$(INCLUDE) $^  exo1.cpp -o exo1
-	$(SHOW)find . -name "*.o" -delete
 	@echo "$(COLOR_OPEN)Compilation de exo1$(COLOR_CLOSE)"
 
 vector.o:
@@ -50,11 +43,14 @@ vector.o:
 
 exo2: chaine.o
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo2.cpp -o exo2
-	$(SHOW)find . -name "*.o" -delete
 	@echo "$(COLOR_OPEN)Compilation de exo2$(COLOR_CLOSE)"
 
 chaine.o:
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)chaine.cpp -o chaine.o
+
+
+# cible: dependance
+# 	commande
 
 
 
@@ -64,22 +60,20 @@ distdir:
 	$(SHOW)cp $(FILESFORDIST) $(DISTDIRNAME)
 	$(SHOW)if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTDIRNAME); fi
 	$(SHOW)if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTDIRNAME); fi
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Regroupement de copie des fichiers dans $(DISTDIRNAME)$(COLOR_CLOSE)"
 
 dist: clean distdir
 	$(SHOW)rm -f [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de l'archive [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip$(COLOR_CLOSE)"
 	$(SHOW)zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTDIRNAME)
 	@echo "$(COLOR_OPEN)Création du .zip terminée$(COLOR_CLOSE)"
 	$(SHOW)rm -rf $(DISTDIRNAME)
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression du dir $(DISTDIRNAME)$(COLOR_CLOSE)"
 
+
+clean_soft:
+	$(SHOW)find . -name "*.o" -delete
 
 clean:
 	$(SHOW)find . -name "*.o" -delete
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de tous les .o$(COLOR_CLOSE)"
 	$(SHOW)rm -f $(PROGS)
-	@$(COMMENT)echo "$(COLOR_SECOND_OPEN)Suppression de $(PROGS)$(COLOR_CLOSE)"
 	@echo "$(COLOR_OPEN)Nettoyage terminé !$(COLOR_CLOSE)"
 
 
