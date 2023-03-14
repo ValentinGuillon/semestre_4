@@ -61,21 +61,18 @@ int main(void)
 
 
 	//appartient
+	assert(a.appartient(4));
+	assert(a.appartient(5));
+	assert(! a.appartient(3));
+	assert(! a.appartient(8-1));
 
-	for (int i = 0; i < 3; i++)
-	{
-		if (a.appartient(i+3))
-			cout<< i+3 <<" appartient à A"<<endl;
-		else
-			cout<< i+3 <<" n'appartient pas à A"<<endl;
-	}
 
 	//intersection
-	Interv test = a.intersec(d);
-	assert(test.appartient(6.1));
-	assert(test.appartient(7.9));
-	assert(!test.appartient(5.9));
-	assert(!test.appartient(9.1));
+	Interv intersection_ab = a.intersec(d);
+	assert(intersection_ab.appartient(6.1));
+	assert(intersection_ab.appartient(7.9));
+	assert(!intersection_ab.appartient(5.9));
+	assert(!intersection_ab.appartient(9.1));
 
 
 	
