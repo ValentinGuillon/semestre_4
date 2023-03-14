@@ -6,12 +6,20 @@
 #include <tableau20.hpp>
 
 
-using namespace std;
-
 
 tableau20_t::tableau20_t (void) {
     for (int i = 0; i < TAILLE; i++)
         tab[i] = 0;
+}
+
+
+std::ostream &operator<<(std::ostream &out, const tableau20_t &obj) {
+    out<<"[";
+
+    for (int i = 0; i < TAILLE -1; i++)
+        out<<obj.tab[i]<<", ";
+
+    return out<<obj.tab[TAILLE]<<"]";
 }
 
 
@@ -30,7 +38,7 @@ int tableau20_t::nbNul(void) const {
 //définition de l'opérateur [] (call ex: tab[5])
 int & tableau20_t::operator[] (int index) {
     if (index < -TAILLE or index > TAILLE) {
-        cout<<"ERROR: index out of range"<<endl;
+        std::cout<<"ERROR: index out of range"<<std::endl;
         // throw 1;
         exit(1);
     }

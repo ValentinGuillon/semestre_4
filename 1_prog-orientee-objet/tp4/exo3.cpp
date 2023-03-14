@@ -2,6 +2,7 @@
 //tests sur la class tableau20_t
 
 #include <iostream>
+#include <cassert>
 
 #include <tableau20.hpp>
 
@@ -11,26 +12,38 @@ using namespace std;
 
 int main(void) {
     tableau20_t tab1;
-    cout<<"tableau20_t tab1;\n  //tab1 = "<<tab1<<endl;
+    for (int i = 0; i < TAILLE; i++)
+    {
+        assert(tab1[i] == 0);
+    }
 
-    tab1[2] = 2;
-    cout<<"tab1[2] = 2;\n  //tab1 = "<<tab1<<endl;
+    tab1[2] = 8;
+    assert(tab1[2] == 8);
 
     int var1 = tab1.nbNul();
-    cout<<"int var1 = tab1.nbNul();\n  //var1 = "<<var1<<endl;
+    assert(var1 == TAILLE-1); //== 4
 
     int var2 = tab1[4];
-    cout<<"int var2 = tab1[4];\n  //var2 = "<<var2<<endl;
+    assert(var2 == 0);
 
 
     tableau20_t tab2;
-    cout<<"tableau20_t tab2;\n  //tab2 = "<<tab2<<endl;
+    for (int i = 0; i < TAILLE; i++)
+    {
+        assert(tab2[i] == 0);
+    }
 
     tab2 = tab1;
-    cout<<"tab2 = tab1;\n  //tab2 = "<<tab2<<endl;
+
+    for (int i = 0; i < TAILLE; i++)
+    {
+        assert(tab1[i] == tab2[i]);
+    }
+
 
     tab1 = tab2 + tab1;
-    cout<<"tab1 = tab2 + tab1;\n  //tab1 = "<<tab1<<endl;
+    assert(tab1[2] == 16);
 
+    cout<<"Tous les tests ont réussis"<<endl;
     return 0;
 }

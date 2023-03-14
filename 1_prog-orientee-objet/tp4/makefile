@@ -12,13 +12,13 @@ INCLUDE = include/
 
 CC = g++ #gcc or g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = makefile -r tp_documents/ exo1.cpp exo2.cpp
+FILESFORDIST = makefile -r tp_documents/ exo1.cpp exo2.cpp exo3.cpp exo4.cpp exo5.cpp
 
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
 CFLAGS = -Wall -Wextra -g -std=c++17
-PROGS = exo3 #exo3
+PROGS = exo1 exo2 exo3 exo4 exo5
 
 
 # exemple:
@@ -27,13 +27,14 @@ PROGS = exo3 #exo3
 
 
 all: clean $(PROGS) clean_soft
-	@echo "$(COLOR_OPEN)!!! exo3 non fini$(COLOR_CLOSE)"
+	@echo "$(COLOR_OPEN)!!!exo5: c.get() (lorsque c est acces_t const) ne marche pas)$(COLOR_CLOSE)"
 
 
 
 
 exo1:
 	$(SHOW)$(CC) $(CFLAGS) exo1.cpp -o exo1
+	@echo "$(COLOR_OPEN)Compilation de exo1$(COLOR_CLOSE)"
 
 
 
@@ -46,13 +47,30 @@ vecteur2d.o:
 
 
 
-
 exo3: tableau20.o
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo3.cpp -o exo3
 	@echo "$(COLOR_OPEN)Compilation de exo3$(COLOR_CLOSE)"
 
 tableau20.o:
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)tableau20.cpp -o tableau20.o
+
+
+
+exo4: intreliee2.o
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo4.cpp -o exo4
+	@echo "$(COLOR_OPEN)Compilation de exo4$(COLOR_CLOSE)"
+
+intreliee2.o:
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)intreliee2.cpp -o intreliee2.o
+
+
+
+exo5: acces.o
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $^ exo5.cpp -o exo5
+	@echo "$(COLOR_OPEN)Compilation de exo5$(COLOR_CLOSE)"
+
+acces.o:
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)acces.cpp -o acces.o
 
 
 

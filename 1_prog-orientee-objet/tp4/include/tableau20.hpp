@@ -4,7 +4,6 @@
 #define TAILLE 5
 
 #include <iostream>
-using namespace std;
 
 
 class tableau20_t {
@@ -15,14 +14,8 @@ class tableau20_t {
         tableau20_t (void);
         /*tableau20_t (void);*/
 
-        friend ostream &operator<<(ostream &out, tableau20_t &tabl) {
-            out<<"[";
-
-            for (int i = 0; i < TAILLE -1; i++)
-                out<<tabl[i]<<", ";
-
-            return out<<tabl[TAILLE]<<"]";
-        }
+        //pour tab = {2, 5, 3}, retourne "[2, 5, 3]"
+        friend std::ostream &operator<<(std::ostream &out, const tableau20_t &tabl);
 
         //retourne le nombre de case vide (== 0)
         int nbNul(void) const;
