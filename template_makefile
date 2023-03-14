@@ -26,7 +26,7 @@ PROGS =
 # 	@echo "$(COLOR_OPEN)Compilation de exo$(COLOR_CLOSE)"
 
 
-all: clean $(PROGS)
+all: clean $(PROGS) clean_soft
 
 
 # cible: dependance
@@ -47,6 +47,9 @@ dist: clean distdir
 	@echo "$(COLOR_OPEN)Création du .zip terminée$(COLOR_CLOSE)"
 	$(SHOW)rm -rf $(DISTDIRNAME)
 
+
+clean_soft:
+	$(SHOW)find . -name "*.o" -delete
 
 clean:
 	$(SHOW)find . -name "*.o" -delete
