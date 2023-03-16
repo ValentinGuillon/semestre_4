@@ -5,27 +5,32 @@
 #include <iostream>
 
 class chaine_t {
-    int max_size;
-    int actual_size;
-    char tab[100];
+    int size;
+    char *tab; //tab[]
+
+    //copie les "size" premiers char de str
+    void copy(char* ret, char* const str, int size, int index_start, int print) const;
 
     public:
-        chaine_t (chaine_t &obj);
+        //constructeur de déclaration
         chaine_t (void);
-        chaine_t (char const* str);
-        chaine_t (int entier);
+        //constructeur par copie
+        chaine_t (chaine_t const &obj);
+        //constructeur avec un tableau de char
+        chaine_t (char* const str);
+        //constructeur qui convertit un entier en tableau d'entier
+        chaine_t (int const entier);
 
         ~chaine_t (void);
 
-        chaine_t operator= (chaine_t const &obj);
+        chaine_t & operator= (chaine_t const &obj);
         chaine_t operator+ (chaine_t const &obj) const;
-        char & operator[] (int const index);
+        char & operator[] (int const index) const;
 
         friend std::ostream &operator<<(std::ostream &out, chaine_t const &obj);
-        void print_chaine (void);
 
 
-        chaine_t append (chaine_t const &obj);
+        chaine_t & append (chaine_t const &obj);
 
 };
 

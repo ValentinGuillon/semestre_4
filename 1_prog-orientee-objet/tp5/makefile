@@ -17,7 +17,7 @@ FILESFORDIST = makefile tp05.pdf exo1.cpp exo2.cpp
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
-CFLAGS = -Wall -Wextra -g  -fsanitize=address -std=c++17
+CFLAGS = -Wall -Wextra -g -std=c++17 #-fsanitize=address
 PROGS = exo2
 
 
