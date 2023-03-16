@@ -1,0 +1,7 @@
+
+A.
+    1. ip de univ-paris8.fr est 193.54.174.1
+    2. j'ai pas la rèf, mais j'imagine que time fait référence au temps de transmission de donnée (peut etre entre moi et le serveur)
+    3. 0%
+
+B.
