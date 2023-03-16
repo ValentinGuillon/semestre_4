@@ -3,8 +3,8 @@ SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettr
 
 
 
-COURS = nom_du_cours
-DEVOIR = devoir_x
+COURS = POO
+DEVOIR = TP5
 PROGRAMMER = GUILLON-Valentin-20002588
 
 SRC = src/
