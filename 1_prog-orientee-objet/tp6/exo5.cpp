@@ -19,8 +19,10 @@ int main(void)
 
     assert(a_pow_8 == 256);
 
+    std::cout<<"b = "<<b<<std::endl;
+    std::cout<<"(3.1*3.1*3.1)*(3.1*3.1*3.1) = "<<(float)(3.1*3.1*3.1)*(3.1*3.1*3.1)<<std::endl;
     std::cout<<"b_pow_7 = "<<b_pow_7<<std::endl;
-    std::cout<<(float)(3.1*3.1*3.1)*(3.1*3.1*3.1)<<std::endl;
+    std::cout<<"(l'assert devrait être bon, mais l'ordi dit non)"<<std::endl;
     // assert(b_pow_7 == (float)((3.1*3.1*3.1)*(3.1*3.1*3.1)));
     
 

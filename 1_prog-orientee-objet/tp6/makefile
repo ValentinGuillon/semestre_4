@@ -12,13 +12,13 @@ INCLUDE = include/
 
 CC = g++#gcc or g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = makefile tp06.pdf exo1.cpp exo2.cpp exo4.cpp exo5.cpp
+FILESFORDIST = makefile tp06.pdf *.cpp
 
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
 CFLAGS = -Wall -Wextra -g -fsanitize=address -std=c++17
-PROGS = exo1 exo2 exo4 exo5
+PROGS = exo1 exo2 exo3 exo4 exo5
 
 
 # exemple:
@@ -28,7 +28,6 @@ PROGS = exo1 exo2 exo4 exo5
 
 all: clean $(PROGS) clean_soft
 	@echo "$(COLOR_OPEN)!!!attention aux tests avec des types float$(COLOR_CLOSE)"
-	@echo "$(COLOR_OPEN)!!!exo3: NON FAIT$(COLOR_CLOSE)"
 
 
 # cible: dependance
@@ -43,6 +42,11 @@ exo1:
 exo2:
 	$(SHOW)$(CC) $(CFLAGS) exo2.cpp -o exo2
 	@echo "$(COLOR_OPEN)Compilation de exo2$(COLOR_CLOSE)"
+
+
+exo3:
+	$(SHOW)$(CC) $(CFLAGS) exo3.cpp -o exo3
+	@echo "$(COLOR_OPEN)Compilation de exo3$(COLOR_CLOSE)"
 
 
 exo4:
