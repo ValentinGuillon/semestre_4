@@ -16,9 +16,7 @@ int main() {
 
 	//référence de type Rvalue;
 	int maVar2;
-	//int &&ref2=maVar2; //error
+	//int &&ref4=maVar2; //error: cannot bind rvalue reference of type ‘int&&’ to lvalue of type ‘int’
 	int &&ref2=4;
 	int &&ref3=f();
-
-
 }

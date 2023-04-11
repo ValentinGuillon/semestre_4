@@ -20,7 +20,9 @@ namespace monEDN{
 	int var2=4;
 }
 
-/*
+
+
+
 //accès à une variable d'un namespace
 int main() {
 	std::cout<< "boujour" << " ";
@@ -28,7 +30,7 @@ int main() {
 	std::cout<< monEDN::var << " "; //var = 2
 	std::cout<< monEDN::MSED::var << " ";  //var = 3
 
-}*/
+}
 
 
 /*
@@ -39,9 +41,9 @@ int main() {
 }*/
 
 
-
+/*
+//prioriser l'utilisation des variables d'un namespace spécifique
 int main() {
 	using namespace monEDN;
 	std::cout<< MSED::var << " ";
-
-}
+}*/

@@ -1,20 +1,25 @@
+/* ARRAY */
 #include<array> //tableau taille static
+
 #include<iostream>
 
 int main () {
-	//int t1[10]; //déclaration de tableau en C
+	//déclaration de tableau en C
+	//int t1[10];
 
-	std::array<int, 10> t2; //déclaration de tableau en C++
+	//déclaration de tableau en C++, avec 'array'
+	std::array<int, 10> t2;
 
 	int i = 0;
 
-	for(int& a: t2) { //& permet de pouvoir modifier la tableau
+	//boucler sur chaque élément du tableau
+	for(int& a: t2) { //& (référence) permet de pouvoir modifier le tableau
 		a=i++;
 	}
 
-	for(auto& a: t2) {
-		std::cout<< a << " "; //sans &, on ne peut pas modifier les éléments
+	for(auto a: t2) { //sans &, on ne peut pas modifier les éléments
+		std::cout<< a << " "; 
 	}
 
-
+	//'auto' fonctionne pour tous les types
 }

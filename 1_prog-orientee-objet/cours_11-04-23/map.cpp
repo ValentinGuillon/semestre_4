@@ -1,25 +1,29 @@
-#include<map> //dictionnaire
+/* MAP */
+#include<map> //dictionnaire de python
 #include<string>
 #include<iostream>
 
 int main() {
-	std::map<std::string, std::string> dico; //on met les types de "clé" et de "valeur" que l'on veut
+	//déclaration (on met les types de "clé" et de "valeur" que l'on veut)
+	std::map<std::string, std::string> dico; 
 	//std::map<std::string, std::string> dico2({"voiture":"truc qui roule"});
-	/* il est recommendé que la clé est l'opérateur < */
+	/* il est recommandé que la clé ai l'opérateur < */
+
+	//création d'une entrée (ou remplacement d'un existante)
 	dico["ballon"]="objet rond et creux";
-
-	/****/
-
 	std::cout << dico["ballon"] << std::endl;
 	dico["ballon"]="objet sphérique et rempli de gaz";
 	std::cout << dico["ballon"] << std::endl;
-	dico["parapluie"]="protège le saligot de la pluie. gg";
 
+	dico["parapluie"]="protège le saligot de la pluie. gg";
+	dico["cahier"];
+
+
+	//boucler
 	for (auto &[a, b]: dico) {
-		std::cout << a << ":" << b << std::endl;
+		std::cout << a << " : " << b << std::endl;
 	}
 
-	//std::cout<< "pas at \"caillou\":" << dico["caillou"] << std::endl;
-	std::cout<< "at \"caillou\":" << dico.at("caillou") << std::endl;
+	std::cout << dico.at("caillou") << std::endl; //si la clé n'existe pas, throwing 'out_of_range'
 
 }
