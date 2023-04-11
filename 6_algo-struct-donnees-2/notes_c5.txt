@@ -1,0 +1,50 @@
+données d'entrée : - matrice et neoud de départ
+
+données de sorties : -tableau de distances (indice étant le numéro du noeud, contenant le temps minimal)
+					- tableau de prédéceceurs (indice <same>, )
+					...oula
+
+
+
+
+Distance  1  2  3  4  5  6  7
+          -  -  -  -  -  -  -
+
+Visités   1  2  3  4  5  6  7
+          -  -  -  -  -  -  - bool
+
+Prédec    1  2  3  4  5  6  7
+          -  -  -  -  -  -  -
+
+on donne la matrice et la noeud 1
+===================================
+
+
+Distance  1  2  3  4  5  6  7
+          0  -  -  -  -  -  -
+
+Visités   1  2  3  4  5  6  7
+          0  0  0  0  0  0  0
+
+Prédec    1  2  3  4  5  6  7
+          1  0  0  0  0  0  0
+
+
+===================================
+
+
+Distance  1  2  3  4  5  6  7
+          0  -  -  -  -  12 5
+
+Visités   1  2  3  4  5  6  7
+          0  0  0  0  0  0  1
+
+Prédec    1  2  3  4  5  6  7
+          1  0  0  0  0  0  0
+          ...
+
+
+matrice en C
+
+int G[MAX][MAX] = {{},
+				   {},...} 
