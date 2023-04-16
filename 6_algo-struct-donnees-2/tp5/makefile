@@ -1,5 +1,5 @@
 
-SHOW =  #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
+SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
 
 
 
