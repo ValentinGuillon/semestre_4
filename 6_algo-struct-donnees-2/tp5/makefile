@@ -1,5 +1,5 @@
 
-SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
+SHOW =  #mettre @ pour masquer les commandes dans le terminal, et ne rien mettre pour les afficher
 
 
 
@@ -35,7 +35,7 @@ tp5: dijkstra.o
 
 
 dijkstra.o:
-	@$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)dijkstra.c
+	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)dijkstra.c
 
 
 # cible: dependance
