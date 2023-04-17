@@ -12,7 +12,7 @@ INCLUDE = include/
 
 CC = gcc#gcc or g++
 DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST = makefile *.c trajets_gare-du-nord_scenario-1.txt trajets_gare-du-nord_scenario-2.txt  #tout le contenu de $(SRC) et $(INCLUDE) est automatiquement ajouté aussi (cf cible "distdir")
+FILESFORDIST = makefile *.c ASD2_TD5.pdf trajets_gare-du-nord_scenario-1.txt trajets_gare-du-nord_scenario-2.txt  #tout le contenu de $(SRC) et $(INCLUDE) est automatiquement ajouté aussi (cf cible "distdir")
 
 
 COLOR_CLOSE = \033[0m
