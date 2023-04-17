@@ -1,0 +1,22 @@
+Quel noeud de départ ? (entre 1 et 7)
+>
+Noeud de départ : 2
+
+Distance de 2 à 1 = 12
+Trajet: 2->7->1
+
+Distance de 2 à 3 = 2
+Trajet: 2->3
+
+Distance de 2 à 4 = 15
+Trajet: 2->3->4
+
+Distance de 2 à 5 = 9
+Trajet: 2->7->5
+
+Distance de 2 à 6 = 24
+Trajet: 2->7->1->6
+
+Distance de 2 à 7 = 7
+Trajet: 2->7
+

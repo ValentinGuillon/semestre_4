@@ -1,0 +1,13 @@
+variables
+Nom, Valeur, Taille, Taille de l'adresse
+var_int, 69, 4, 8
+var_float, 3.1400001, 4, 8
+var_char, 86 'V', 1, 8
+var_chaine1, "aled", 5, 8
+var_long_int, 6969, 8, 8
+var_chaine2, "pas aled en fait mdr", 21, 8
+
+
+
+pointeurs
+Nom, 
