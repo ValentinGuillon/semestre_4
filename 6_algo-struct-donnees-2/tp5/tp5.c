@@ -10,6 +10,14 @@
 #define SIZE 7 //nombre de noeud de la matrice
 
 
+// alloue de la mémoire pour une matrice [x][y]
+int** allocate_matrice(int **mat, int x, int y);
+
+// libère la mémoire d'une matrice [x][]
+int** free_matrice(int **mat, int x);
+
+
+
 int main(int argc, char** argv) {
     // arrêt du programme si on ne donne pas d'argument à l'exécution
     if (argc == 1) {
@@ -55,9 +63,7 @@ int main(int argc, char** argv) {
     int **matrice = NULL; //matrice de taille [size][size]
     
     // allocation mémoire
-    matrice = malloc(SIZE * sizeof(int*));
-    for (int i = 0; i < SIZE; i++)
-        matrice[i] = malloc(SIZE * sizeof(int*));
+    matrice = allocate_matrice(matrice, SIZE, SIZE);
 
     // remplissage avec une matrice déjà existante
     for (int i = 0; i < SIZE; i++){
@@ -86,9 +92,7 @@ int main(int argc, char** argv) {
     int **paths = NULL; //doit être de taille [size][size+1]
     
     //allocation mémoire
-    paths = malloc(SIZE * sizeof(int*));
-    for (int i = 0; i < SIZE+1; i++)
-        paths[i] = malloc(SIZE+1 * sizeof(int*));
+    paths = allocate_matrice(paths, SIZE, SIZE+1);
 
     //remplissage
     for (int i = 0; i < SIZE; i++){
@@ -105,5 +109,30 @@ int main(int argc, char** argv) {
     printf("\nNoeud de départ : %d\n\n", node);
     afficher_trajets(paths, SIZE, node);
 
+    free_matrice(matrice, SIZE);
+    free_matrice(paths, SIZE);
     return 0;
+}
+
+
+
+
+
+// alloue de la mémoire pour une matrice [x][y]
+int** allocate_matrice(int **mat, int x, int y) {
+    mat = malloc(x * sizeof(int*));
+    for (int i = 0; i < x; i++)
+        mat[i] = malloc(y * sizeof(int*));
+    
+    return mat;
+}
+
+
+// libère la mémoire d'une matrice [x][]
+int** free_matrice(int **mat, int x) {
+    for (int i = 0; i < x; i++)
+        free(mat[i]);
+    free(mat);
+
+    return mat;
 }

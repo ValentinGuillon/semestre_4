@@ -17,7 +17,7 @@ FILESFORDIST = makefile *.c trajets_gare-du-nord_scenario-1.txt trajets_gare-du-
 
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
-CFLAGS = -Wall -Wextra -g #-fsanitize=address #-std=c++17
+CFLAGS = -Wall -Wextra -g -fsanitize=address #-std=c++17
 PROGS = tp5
 
 
