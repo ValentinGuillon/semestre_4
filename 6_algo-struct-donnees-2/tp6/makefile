@@ -18,7 +18,7 @@ FILESFORDIST = makefile ASD2_TD6.pdf *.c *.txt
 COLOR_CLOSE = \033[0m
 COLOR_OPEN = $(COLOR_CLOSE)\033[38;2;255;171;0m
 CFLAGS = -Wall -Wextra -g -fsanitize=address #-std=c++17
-PROGS = tp6 exam1 test_variables
+PROGS = test_variables exam1 exam1_corrige tp6
 
 
 # exemple:
@@ -29,23 +29,25 @@ PROGS = tp6 exam1 test_variables
 all: clean $(PROGS) clean_soft
 
 
+test_variables:
+	$(SHOW)$(CC) $(CFLAGS) $@.c -o $@
+	@echo "$(COLOR_OPEN)Compilation de $@$(COLOR_CLOSE)"
+
+exam1:
+	$(SHOW)$(CC) $(CFLAGS) $@.c -o $@
+	@echo "$(COLOR_OPEN)Compilation de $@$(COLOR_CLOSE)"
+
+exam1_corrige:
+	$(SHOW)$(CC) $(CFLAGS) $@.c -o $@
+	@echo "$(COLOR_OPEN)Compilation de $@$(COLOR_CLOSE)"
+
+
 tp6: dijkstra.o
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) $@.c $^ -o $@
 	@echo "$(COLOR_OPEN)Compilation de $@$(COLOR_CLOSE)"
 
 dijkstra.o:
 	$(SHOW)$(CC) $(CFLAGS) -I$(INCLUDE) -c $(SRC)dijkstra.c
-
-
-
-exam1:
-	$(SHOW)$(CC) $(CFLAGS) $@.c -o $@
-	@echo "$(COLOR_OPEN)Compilation de $@$(COLOR_CLOSE)"
-
-test_variables:
-	$(SHOW)$(CC) $(CFLAGS) $@.c -o $@
-	@echo "$(COLOR_OPEN)Compilation de $@$(COLOR_CLOSE)"
-
 
 
 # cible: dependance
