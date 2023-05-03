@@ -106,7 +106,7 @@ int main(void) {
         error_occurred = 1;
     }
 
-    // world::destroy(world, world_size);
+    world::destroy(world, world_size);
 
     if (error_occurred) return 0;
 

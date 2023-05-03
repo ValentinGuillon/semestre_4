@@ -31,11 +31,11 @@ namespace classes {
             if (i < 0 || i >= size.x) continue;
             for (int j = coords.y -1; j <= coords.y +1; j++) {
                 if (j < 0 || j >= size.y) continue;
-                if (! world[i][j].is_free_for(creature->get_type())) continue;
+                if (! world[i][j]->is_free_for(creature->get_type())) continue;
 
                 threat = creature->get_threat();
                 if (! threat.compare("none") == 0) {
-                    if (! world[i][j].is_free_for(threat)) continue;
+                    if (! world[i][j]->is_free_for(threat)) continue;
                 }
 
                 free_cases = (my_tuple*)realloc(free_cases, ++nb_cases * sizeof(my_tuple*));
@@ -186,15 +186,8 @@ namespace classes {
 
 
     CASE::CASE(my_tuple const coords) {
-        cout << coords << " construct\n";
         this->coords = coords;
-
-
-        // cout << this->coords << "this->has (before new) = " << this->has << endl;
         this->has = new map<string, int>;
-        // cout << this->coords << "this->has (after new) = " << this->has << endl;
-
-
         this->has->insert(make_pair(WOLF, 0));
         this->has->insert(make_pair(SHEEP, 0));
         this->has->insert(make_pair(HERB, 0));
@@ -203,22 +196,15 @@ namespace classes {
         this->wolf = NULL;
         this->sheep = NULL;
 
-        // cout<<"NEW CASE :\n"<<*this<<endl;
     }
 
     CASE::~CASE(void) {
-        cout << this->coords << " destruct\n";
-
-        // cout << this->coords << "this->has (before delete) = " << this->has << endl;
-        // delete this->has;
-        // cout << this->coords << "this->has (after delete) = " << this->has << endl;
+        delete this->has;
 
         if(this->wolf)
             delete(this->wolf);
         if(this->sheep)
             delete(this->sheep);
-        // free(this->wolf);
-        // free(this->sheep);
     };
 
 
@@ -289,8 +275,8 @@ namespace classes {
                 this->wolf = NULL;
                 (*this->has)[WOLF] = 0;
 
-                world[moved_to.x][moved_to.y].wolf = creature;
-                (*world[moved_to.x][moved_to.y].has)[WOLF] = 1;
+                world[moved_to.x][moved_to.y]->wolf = creature;
+                (*world[moved_to.x][moved_to.y]->has)[WOLF] = 1;
 
                 if (!HIDE_PRINTS)
                     cout<<"\033[38;2;255;171;0mMOVED :\033[0m\n"<<*creature<<endl;
@@ -307,8 +293,8 @@ namespace classes {
                 this->sheep = NULL;
                 (*this->has)[SHEEP] = 0;
 
-                world[moved_to.x][moved_to.y].sheep = creature;
-                (*world[moved_to.x][moved_to.y].has)[SHEEP] = 1;
+                world[moved_to.x][moved_to.y]->sheep = creature;
+                (*world[moved_to.x][moved_to.y]->has)[SHEEP] = 1;
 
                 if (!HIDE_PRINTS)
                     cout<<"\033[38;2;255;171;0mMOVED :\033[0m\n"<<*creature<<endl;
@@ -394,14 +380,14 @@ namespace classes {
             this->food = SHEEP;
             this->threat = "none";
             this->gender = gender;
-            this->day_esperance = 3;
+            this->day_esperance = 30;
             this->hunger_limit = 10;
         }
         else if (type == SHEEP) {
             this->food = HERB;
             this->threat = WOLF;
             this->gender = gender;
-            this->day_esperance = 2;
+            this->day_esperance = 25;
             this->hunger_limit = 5;
         }
         else throw (my_error){NOT_DEFINED_CREATURE, "classes.cpp: CREATURE::CREATURE"};
@@ -442,7 +428,7 @@ namespace classes {
 
 
     void CREATURE::eat(WORLD &world) {
-        CASE* actual_case = &world[this->coords.x][this->coords.y];
+        CASE* actual_case = world[this->coords.x][this->coords.y];
         int food_available = !actual_case->is_free_for(this->food);
         if (!food_available) return;
 
@@ -488,15 +474,15 @@ namespace classes {
             for (int j = this->coords.y -1; j <= this->coords.y +1; j++) {
                 if (j < 0 || j >= size.y) continue;
 
-                int has_congenere = !world[i][j].is_free_for(this->type);
+                int has_congenere = !world[i][j]->is_free_for(this->type);
                 if (!has_congenere) continue;
 
 
                 if (type.compare(WOLF) == 0) {
-                    congenere = world[i][j].get_wolf();
+                    congenere = world[i][j]->get_wolf();
                 }
                 else if (type.compare(SHEEP) == 0) {
-                    congenere = world[i][j].get_sheep();
+                    congenere = world[i][j]->get_sheep();
                 }
 
                 if (congenere->reproducting) continue;
@@ -529,9 +515,9 @@ namespace classes {
         int random = std::rand() % nb_cases;
         my_tuple partner_case = cases_of_potential_partner[random];
         if (this->type.compare(WOLF) == 0)
-            congenere = world[partner_case.x][partner_case.y].get_wolf();
+            congenere = world[partner_case.x][partner_case.y]->get_wolf();
         if (this->type.compare(SHEEP) == 0)
-            congenere = world[partner_case.x][partner_case.y].get_sheep();
+            congenere = world[partner_case.x][partner_case.y]->get_sheep();
 
         this->reproducting = 1;
         congenere->reproducting = 1;
@@ -562,7 +548,7 @@ namespace classes {
         int random = std::rand() % nb_cases;
 
 
-        CASE* choosen_case = &world[free_cases[random].x][free_cases[random].y];
+        CASE* choosen_case = world[free_cases[random].x][free_cases[random].y];
 
         choosen_case->add_entity(this->type);
 
@@ -582,7 +568,7 @@ namespace classes {
 
         if (death_reason.compare("none") == 0) return;
     
-        world[this->coords.x][this->coords.y].remove_entity(this->type, death_reason);
+        world[this->coords.x][this->coords.y]->remove_entity(this->type, death_reason);
     };
 
     void CREATURE::has_survived(void) {

@@ -56,75 +56,47 @@ namespace world {
     void create(WORLD &world, my_tuple size, int nb_wolfs, int nb_sheeps) {
         if (nb_wolfs+nb_sheeps > size.x*size.y) throw (my_error){TOO_MUCH_CREATURES, "world.cpp: create_world"};
 
-
-        cout << "remplissage world\n";
-        //creéation des CASEs
+        CASE* temp;
+        //creation of CASEs
         for (int i = 0; i < size.x; i++) {
-            cout << "init line\n";
-            vector<CASE> line;
-            cout << "fin init line\n";
+            vector<CASE*> line;
+
             for (int j = 0; j < size.y; j++) {
-                cout << "push case\n";
-                line.push_back(CASE{{i, j}});
-                cout << "fin push case\n";
+                temp = new CASE{{i, j}};
+                line.push_back(temp);
             }
-            cout << "push line\n";
             world.push_back(line);
-            cout << "fin push line\n";
         }
-        cout << "fin remplissage world\n";
-
-
-        //creéation des CASEs
-        // world = (CASE**) malloc(size.x * sizeof(CASE**));
-        // for (int i = 0; i < size.x; i++) {
-
-        //     world[i] = (CASE*) malloc(size.y * sizeof(CASE*));
-            
-        //     for (int j = 0; j < size.y; j++) {
-        //         world[i+j] = new CASE{{i, j}};
-        //     }
-        //     // cout << "push line\n";
-        //     // world.push_back(line);
-        //     // cout << "fin push line\n";
-        // }
-        // cout << "fin remplissage world\n";
-
-        display(world, size);
+        temp = NULL;
 
 
         //ajout de l'herbe
         for (int i = 0; i < size.x; i++) {
-            for (int j = 0; j < size.y; j++) {
-                world[i][j].add_entity(HERB);
-            }
+            for (int j = 0; j < size.y; j++)
+                world[i][j]->add_entity(HERB);
         }
 
 
-        // create wolf/sheep (which proportion ? -> wolf=1/3, sheep=2/3)
-        // int nb_wolfs = nb_creatures / 4;
-        // int nb_sheeps = nb_creatures - nb_wolfs;
-
+        // create wolf/sheep
         int has_wolf_female = 0, has_wolf_male = 0, has_sheep_female = 0, has_sheep_male = 0;
-
 
         int pos_x, pos_y;
         for (int i = 0; i < nb_wolfs; i++) {
             while(1) {
                 pos_x = std::rand() % size.x;
                 pos_y = std::rand() % size.y;
-                if (! world[pos_x][pos_y].is_free_for(WOLF)) continue;
+                if (! world[pos_x][pos_y]->is_free_for(WOLF)) continue;
                 if (!has_wolf_male) {
                     has_wolf_male = 1;
-                    world[pos_x][pos_y].add_entity(WOLF, MALE);
+                    world[pos_x][pos_y]->add_entity(WOLF, MALE);
                     break;
                 }
                 if (!has_wolf_female) {
                     has_wolf_female = 1;
-                    world[pos_x][pos_y].add_entity(WOLF, FEMALE);
+                    world[pos_x][pos_y]->add_entity(WOLF, FEMALE);
                     break;
                 }
-                world[pos_x][pos_y].add_entity(WOLF);
+                world[pos_x][pos_y]->add_entity(WOLF);
                 break;
             }
         }
@@ -133,20 +105,20 @@ namespace world {
             while(1) {
                 pos_x = std::rand() % size.x;
                 pos_y = std::rand() % size.y;
-                if (! world[pos_x][pos_y].is_free_for(WOLF)) continue;
-                if (! world[pos_x][pos_y].is_free_for(SHEEP)) continue;
+                if (! world[pos_x][pos_y]->is_free_for(WOLF)) continue;
+                if (! world[pos_x][pos_y]->is_free_for(SHEEP)) continue;
                 if (!has_sheep_male) {
                     has_sheep_male = 1;
-                    world[pos_x][pos_y].add_entity(SHEEP, MALE);
+                    world[pos_x][pos_y]->add_entity(SHEEP, MALE);
                     break;
                 }
                 if (!has_sheep_female) {
                     has_sheep_female = 1;
-                    world[pos_x][pos_y].add_entity(SHEEP, FEMALE);
+                    world[pos_x][pos_y]->add_entity(SHEEP, FEMALE);
                     break;
                 }
             
-                world[pos_x][pos_y].add_entity(SHEEP);
+                world[pos_x][pos_y]->add_entity(SHEEP);
                 break;
             }
         }
@@ -163,7 +135,7 @@ namespace world {
         //reset has_moved
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 creature = actual_case->get_wolf();
                 if (creature)
                     creature->reset_has_moved();
@@ -176,7 +148,7 @@ namespace world {
         //reset has_reproduct
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 creature = actual_case->get_wolf();
                 if (creature)
                     creature->reset_has_reproduct();
@@ -189,7 +161,7 @@ namespace world {
         //herbs grows
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 if (actual_case->is_free_for(MINERAL)) continue;
                 if (!actual_case->is_free_for(HERB)) {
                     actual_case->remove_entity(MINERAL);
@@ -209,7 +181,7 @@ namespace world {
         //death of old/hungry creatures
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 //wolf
                 creature = actual_case->get_wolf();
                 if (creature) 
@@ -234,7 +206,7 @@ namespace world {
         //creatures moves
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
 
                 actual_case->move_creatures(world, size);
             }
@@ -250,7 +222,7 @@ namespace world {
         //creature gives birth
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 //wolf
                 creature = actual_case->get_wolf();
                 if (creature) 
@@ -273,7 +245,7 @@ namespace world {
         //creatures eats
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 //wolf
                 creature = actual_case->get_wolf();
                 if (creature) 
@@ -296,7 +268,7 @@ namespace world {
         //creatures reproducts
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 //wolf
                 creature = actual_case->get_wolf();
                 if (creature) 
@@ -318,7 +290,7 @@ namespace world {
         //creatures has survived the day
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                actual_case = &world[i][j];
+                actual_case = world[i][j];
                 creature = actual_case->get_wolf();
                 if (creature)
                     creature->has_survived();
@@ -335,7 +307,7 @@ namespace world {
     int is_dead(WORLD &world, my_tuple size) {
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                if (!world[i][j].is_free_for(WOLF) || !world[i][j].is_free_for(SHEEP))
+                if (!world[i][j]->is_free_for(WOLF) || !world[i][j]->is_free_for(SHEEP))
                     return 0;
             }
         }
@@ -345,7 +317,7 @@ namespace world {
     int has_creatures(WORLD &world, my_tuple size, string creature) {
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
-                if (!world[i][j].is_free_for(creature))
+                if (!world[i][j]->is_free_for(creature))
                     return 1;
             }
         }
@@ -353,16 +325,10 @@ namespace world {
     }
 
     void destroy(WORLD &world, my_tuple size) {
-        cout<<"enter destroy()\n";
-        // delete(&world[0][0]);
-        // for (int i = 0; i < size.x; i++) {
-        //     for (int j = 0; j < size.y; j++) {
-        //         // world[i][j].free_all_creatures();
-        //         delete(&world[i][j]);
-        //     }
-        //     // free(world[i]);
-        // }
-        cout<<"exit destroy()\n";
+        for (int i = 0; i < size.x; i++) {
+            for (int j = 0; j < size.y; j++)
+                delete(world[i][j]);
+        }
     }
 
 
@@ -370,9 +336,8 @@ namespace world {
 
 
     void display(WORLD &world, my_tuple size) {
-        cout<<endl;
+        cout<< "\n    y";
 
-        cout<< "    y";
         for (int i = 0; i < size.y; i++) {
             if (i < 10)
                 cout<<"  "<< i <<"  ";
@@ -381,10 +346,9 @@ namespace world {
             else if (i < 1000)
                 cout<<" "<< i <<" ";
         }
-        cout<< "y";
-        cout<<endl;
 
-        cout<< "  x  ";
+        cout<< "y\n  x  ";
+    
         for (int i = 0; i < size.x; i++) {
             if (i > 0)
                 cout<< "     ";
@@ -401,7 +365,7 @@ namespace world {
                 cout<<" "<< i <<" ";
             for (int j = 0; j < size.y; j++) {
                 cout << "|";
-                world[i][j].display();
+                world[i][j]->display();
                 cout << "|";
             }
             if (i < 10)
@@ -412,11 +376,11 @@ namespace world {
                 cout<<" "<< i;
             cout << endl;
         }
+
         cout<< "  x  ";
         print_line(size.y);
-        cout<< "  x"<<endl;
+        cout<< "  x\n    y";
 
-        cout<< "    y";
         for (int i = 0; i < size.y; i++)
             if (i < 10)
                 cout<<"  "<< i <<"  ";
@@ -424,9 +388,8 @@ namespace world {
                 cout<<"  "<< i <<" ";
             else if (i < 1000)
                 cout<<" "<< i <<" ";
-        cout<< "y";
-        cout<<endl;
-        cout<<endl;
+
+        cout<< "y\n\n";
     }
 
 }

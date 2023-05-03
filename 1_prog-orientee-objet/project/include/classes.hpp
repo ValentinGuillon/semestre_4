@@ -25,7 +25,7 @@ string choice(string const a, string const b);
 namespace classes {
     class CASE;
 
-    typedef vector<vector<CASE>> WORLD;
+    typedef vector<vector<CASE*>> WORLD;
     // typedef CASE** WORLD;
 
     typedef struct tuple_t my_tuple;
