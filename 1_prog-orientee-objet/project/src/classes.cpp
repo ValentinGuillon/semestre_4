@@ -48,7 +48,11 @@ namespace classes {
 
 
 
-
+    int my_tuple::operator==(my_tuple &obj) {
+        if (this->x != obj.x) return 0;
+        if (this->y != obj.y) return 0;
+        return 1;
+    }
 
     ostream& operator<<(ostream &out, my_tuple const &obj) {
         out<<"[x="<<obj.x<<",y="<<obj.y<<"]";
@@ -57,10 +61,10 @@ namespace classes {
 
     ostream& operator<<(ostream &out, CASE const &obj) {
         out << "{" << obj.coords;
-        out << ", loup=" << obj.loup;
-        out << ", mouton=" << obj.mouton;
-        out << ", has{loup=" << (*obj.has)[LOUP];
-        out << ",mouton=" << (*obj.has)[MOUTON];
+        out << ", wolf=" << obj.wolf;
+        out << ", sheep=" << obj.sheep;
+        out << ", has{wolf=" << (*obj.has)[WOLF];
+        out << ",sheep=" << (*obj.has)[SHEEP];
         out << ",herb=" << (*obj.has)[HERB];
         out << ",mineral=" << (*obj.has)[MINERAL] << "}";
 
@@ -106,7 +110,7 @@ namespace classes {
         string BLUE = "\033[38;2;44;187;250m";
         string BACK_GREEN = "\033[48;2;17;100;0;1m";
         string BACK_ORANGE  = "\033[48;2;255;171;0m";
-        string BACK_GREY  = "\033[48;2;165;165;165m";
+        string BACK_GREY  = "\033[48;2;115;115;115m";
         
         string on_ground = RESET_COLOR;
 
@@ -117,64 +121,64 @@ namespace classes {
 
         cout << on_ground;
 
-        if (!(*this->has)[LOUP] && !(*this->has)[MOUTON]) {
+        if (!(*this->has)[WOLF] && !(*this->has)[SHEEP]) {
             cout<< "   " << RESET_COLOR;
             return;
         }
 
 
         string gender;
-        if ((*this->has)[LOUP] && (*this->has)[MOUTON]) {
-            gender = this->get_loup()->get_gender();
+        if ((*this->has)[WOLF] && (*this->has)[SHEEP]) {
+            gender = this->get_wolf()->get_gender();
                 if (gender.compare(MALE) == 0)
                     cout << BLUE;
                 else if (gender.compare(FEMALE) == 0)
                     cout << PINK;
 
-                if (this->get_loup()->get_reproducting())
+                if (this->get_wolf()->get_reproducting())
                     cout << BACK_GREY;
 
-            cout << "L" << on_ground << " ";
+            cout << "W" << on_ground << " ";
 
-            gender = this->get_mouton()->get_gender();
+            gender = this->get_sheep()->get_gender();
                 if (gender.compare(MALE) == 0)
                     cout << BLUE;
                 else if (gender.compare(FEMALE) == 0)
                     cout << PINK;
 
-                if (this->get_mouton()->get_reproducting())
+                if (this->get_sheep()->get_reproducting())
                     cout << BACK_GREY;
 
-            cout << "M" << on_ground;
+            cout << "S" << on_ground;
         }
 
 
-        else if ((*this->has)[LOUP]) {
+        else if ((*this->has)[WOLF]) {
             cout<< " ";
-            gender = this->get_loup()->get_gender();
+            gender = this->get_wolf()->get_gender();
                 if (gender.compare(MALE) == 0)
                     cout << BLUE;
                 else if (gender.compare(FEMALE) == 0)
                     cout << PINK;
     
-                if (this->get_loup()->get_reproducting())
+                if (this->get_wolf()->get_reproducting())
                     cout << BACK_GREY;
 
-            cout << "L" << on_ground << " ";
+            cout << "W" << on_ground << " ";
         }
 
-        else if ((*this->has)[MOUTON]) {
+        else if ((*this->has)[SHEEP]) {
             cout<< " ";
-            gender = this->get_mouton()->get_gender();
+            gender = this->get_sheep()->get_gender();
                 if (gender.compare(MALE) == 0)
                     cout << BLUE;
                 else if (gender.compare(FEMALE) == 0)
                     cout << PINK;
     
-                if (this->get_mouton()->get_reproducting())
+                if (this->get_sheep()->get_reproducting())
                     cout << BACK_GREY;
 
-            cout << "M" << on_ground << " ";
+            cout << "S" << on_ground << " ";
         }
 
         cout << RESET_COLOR;
@@ -182,26 +186,40 @@ namespace classes {
 
 
     CASE::CASE(my_tuple const coords) {
+        cout << coords << " construct\n";
         this->coords = coords;
 
-        this->has = new map<string, int>;
 
-        this->has->insert(make_pair(LOUP, 0));
-        this->has->insert(make_pair(MOUTON, 0));
+        // cout << this->coords << "this->has (before new) = " << this->has << endl;
+        this->has = new map<string, int>;
+        // cout << this->coords << "this->has (after new) = " << this->has << endl;
+
+
+        this->has->insert(make_pair(WOLF, 0));
+        this->has->insert(make_pair(SHEEP, 0));
         this->has->insert(make_pair(HERB, 0));
         this->has->insert(make_pair(MINERAL, 0));
 
-        this->loup = NULL;
-        this->mouton = NULL;
+        this->wolf = NULL;
+        this->sheep = NULL;
 
         // cout<<"NEW CASE :\n"<<*this<<endl;
     }
 
-    // CASE::~CASE(void) {
-    //     delete this->has;
-    //     free(this->loup);
-    //     free(this->mouton);
-    // };
+    CASE::~CASE(void) {
+        cout << this->coords << " destruct\n";
+
+        // cout << this->coords << "this->has (before delete) = " << this->has << endl;
+        // delete this->has;
+        // cout << this->coords << "this->has (after delete) = " << this->has << endl;
+
+        if(this->wolf)
+            delete(this->wolf);
+        if(this->sheep)
+            delete(this->sheep);
+        // free(this->wolf);
+        // free(this->sheep);
+    };
 
 
     int CASE::is_free_for(string const type) const {
@@ -220,7 +238,7 @@ namespace classes {
     }
 
 
-    void CASE::add_entity(string const type) {
+    void CASE::add_entity(string const type, string gender) {
         if (! this->is_free_for(type)) throw (my_error){WRONG_GIVEN_ENTITY, "classes.cpp: CASE::add_entity"};
 
         try {
@@ -233,6 +251,8 @@ namespace classes {
             throw (my_error){NOT_DEFINED_CREATURE, "classes.cpp: CASE::add_entity"};
         }
 
+        if (gender == "none")
+            gender = choice(MALE, FEMALE);
 
         if (type.compare(HERB) == 0) {
             if (!HIDE_PRINTS)
@@ -245,11 +265,11 @@ namespace classes {
                 cout<<"\033[38;2;255;171;0mMINERAL DROPED AT :\033[0m"<< this->coords<<endl;
             return;
         }
-        else if (type.compare(LOUP) == 0) {
-            this->loup = new CREATURE{LOUP, {this->coords.x, coords.y}};
+        else if (type.compare(WOLF) == 0) {
+            this->wolf = new CREATURE{WOLF, {this->coords.x, coords.y}, gender};
         }
-        else if (type.compare(MOUTON) == 0)
-            this->mouton = new CREATURE{MOUTON, {coords.x, coords.y}};
+        else if (type.compare(SHEEP) == 0)
+            this->sheep = new CREATURE{SHEEP, {coords.x, coords.y}, gender};
 
         else throw (my_error){NOT_DEFINED_CREATURE, "classes.cpp: CASE::add_entity"};
     }
@@ -258,16 +278,19 @@ namespace classes {
     void CASE::move_creatures(WORLD &world, my_tuple size) {
         CREATURE* creature = NULL;
         my_tuple moved_to;
+        my_tuple moved_from;
 
-        if (!this->is_free_for(LOUP)) {
-            creature = this->loup;
+        if (!this->is_free_for(WOLF)) {
+            creature = this->wolf;
             if (!creature->get_has_moved() && !creature->get_reproducting()) {
+                moved_from = creature->get_coords();
                 moved_to = creature->move(world, size);
-                this->loup = NULL;
-                (*this->has)[LOUP] = 0;
+                if (moved_from == moved_to) return;
+                this->wolf = NULL;
+                (*this->has)[WOLF] = 0;
 
-                world[moved_to.x][moved_to.y].loup = creature;
-                (*world[moved_to.x][moved_to.y].has)[LOUP] = 1;
+                world[moved_to.x][moved_to.y].wolf = creature;
+                (*world[moved_to.x][moved_to.y].has)[WOLF] = 1;
 
                 if (!HIDE_PRINTS)
                     cout<<"\033[38;2;255;171;0mMOVED :\033[0m\n"<<*creature<<endl;
@@ -275,15 +298,17 @@ namespace classes {
         }
 
 
-        if (!this->is_free_for(MOUTON)) {
-            creature = this->mouton;
+        if (!this->is_free_for(SHEEP)) {
+            creature = this->sheep;
             if (!creature->get_has_moved() && !creature->get_reproducting()) {
+                moved_from = creature->get_coords();
                 moved_to = creature->move(world, size);
-                this->mouton = NULL;
-                (*this->has)[MOUTON] = 0;
+                if (moved_from == moved_to) return;
+                this->sheep = NULL;
+                (*this->has)[SHEEP] = 0;
 
-                world[moved_to.x][moved_to.y].mouton = creature;
-                (*world[moved_to.x][moved_to.y].has)[MOUTON] = 1;
+                world[moved_to.x][moved_to.y].sheep = creature;
+                (*world[moved_to.x][moved_to.y].has)[SHEEP] = 1;
 
                 if (!HIDE_PRINTS)
                     cout<<"\033[38;2;255;171;0mMOVED :\033[0m\n"<<*creature<<endl;
@@ -302,34 +327,29 @@ namespace classes {
 
         if (type.compare(HERB) == 0 or type.compare(MINERAL) == 0) return;
 
-        else if (type.compare(LOUP) == 0) {
+        else if (type.compare(WOLF) == 0) {
             if (!HIDE_PRINTS)
-                cout<<"\033[38;2;255;171;0mDIED :\033[0m ("<< death_reason << ")\n" <<*this->loup<<endl;
-            delete(this->loup);
-            this->loup = NULL;
+                cout<<"\033[38;2;255;171;0mDIED :\033[0m ("<< death_reason << ")\n" <<*this->wolf<<endl;
+            delete(this->wolf);
+            this->wolf = NULL;
         }
-        else if (type.compare(MOUTON) == 0) {
+        else if (type.compare(SHEEP) == 0) {
             if (!HIDE_PRINTS)
-                cout<<"\033[38;2;255;171;0mDIED :\033[0m ("<< death_reason << ")\n" <<*this->mouton<<endl;
-            delete(this->mouton);
-            this->mouton = NULL;
+                cout<<"\033[38;2;255;171;0mDIED :\033[0m ("<< death_reason << ")\n" <<*this->sheep<<endl;
+            delete(this->sheep);
+            this->sheep = NULL;
         }
         else throw (my_error){NOT_DEFINED_CREATURE, "classes.cpp: CASE::remove_entity"};
 
-        if ((death_reason.compare(DEATH_HUNGER) == 0) or (death_reason.compare(DEATH_AGE) == 0))
+        if ((death_reason.compare(DEATH_HUNGER) == 0) or (death_reason.compare(DEATH_OLDNESS) == 0))
             this->add_entity(MINERAL);
     }
 
 
-    void CASE::free_all_creatures(void) {
-        delete(this->loup);
-        delete(this->mouton);
-    }
 
 
-
-    CREATURE* CASE::get_loup(void) const { return this->loup; }
-    CREATURE* CASE::get_mouton(void) const { return this->mouton; }
+    CREATURE* CASE::get_wolf(void) const { return this->wolf; }
+    CREATURE* CASE::get_sheep(void) const { return this->sheep; }
 
 
 
@@ -361,7 +381,7 @@ namespace classes {
 
 
 
-    CREATURE::CREATURE(string const type, my_tuple const coords){
+    CREATURE::CREATURE(string const type, my_tuple const coords, string gender){
         this->type = type;
         this->coords.x = coords.x; this->coords.y = coords.y;
         this->day_living = 0;
@@ -370,19 +390,19 @@ namespace classes {
         this->has_reproduct = 1;
         this->has_moved = 1;
 
-        if (type == LOUP) {
-            food = MOUTON;
-            threat = "none";
-            gender = choice(MALE, FEMALE);
-            day_esperance = 30;
-            hunger_limit = 10;
+        if (type == WOLF) {
+            this->food = SHEEP;
+            this->threat = "none";
+            this->gender = gender;
+            this->day_esperance = 3;
+            this->hunger_limit = 10;
         }
-        else if (type == MOUTON) {
-            food = HERB;
-            threat = LOUP;
-            gender = choice(MALE, FEMALE);
-            day_esperance = 25;
-            hunger_limit = 5;
+        else if (type == SHEEP) {
+            this->food = HERB;
+            this->threat = WOLF;
+            this->gender = gender;
+            this->day_esperance = 2;
+            this->hunger_limit = 5;
         }
         else throw (my_error){NOT_DEFINED_CREATURE, "classes.cpp: CREATURE::CREATURE"};
 
@@ -437,7 +457,32 @@ namespace classes {
         if (this->reproducting) return;
         if (this->has_reproduct) return;
 
+        my_tuple *cases_of_potential_partner = NULL;
+        int nb_cases = 0;
+        /*
+        // my_tuple *free_cases = NULL;
+        int nb_cases = 0;
+        string threat;
+
+        for (int i = coords.x -1; i <= coords.x +1; i++) {
+            if (i < 0 || i >= size.x) continue;
+            for (int j = coords.y -1; j <= coords.y +1; j++) {
+                if (j < 0 || j >= size.y) continue;
+                if (! world[i][j].is_free_for(creature->get_type())) continue;
+
+                threat = creature->get_threat();
+                if (! threat.compare("none") == 0) {
+                    if (! world[i][j].is_free_for(threat)) continue;
+                }
+
+                free_cases = (my_tuple*)realloc(free_cases, ++nb_cases * sizeof(my_tuple*));
+                free_cases[nb_cases-1] = {i, j};
+            }
+        }
+        return nb_cases;
+        */
         //search on adjacents CASE
+        CREATURE* congenere;
         for (int i = this->coords.x -1; i <= this->coords.x +1; i++) {
             if (i < 0 || i >= size.x) continue;
             for (int j = this->coords.y -1; j <= this->coords.y +1; j++) {
@@ -446,29 +491,57 @@ namespace classes {
                 int has_congenere = !world[i][j].is_free_for(this->type);
                 if (!has_congenere) continue;
 
-                CREATURE* congenere;
 
-                if (type.compare(LOUP) == 0) {
-                    congenere = world[i][j].get_loup();
+                if (type.compare(WOLF) == 0) {
+                    congenere = world[i][j].get_wolf();
                 }
-                else if (type.compare(MOUTON) == 0) {
-                    congenere = world[i][j].get_mouton();
+                else if (type.compare(SHEEP) == 0) {
+                    congenere = world[i][j].get_sheep();
                 }
 
                 if (congenere->reproducting) continue;
                 if (congenere->has_reproduct) continue;
                 if (congenere->gender.compare(this->gender) == 0) continue;
 
-                this->reproducting = 1;
-                congenere->reproducting = 1;
+                
+                cases_of_potential_partner = (my_tuple*)realloc(cases_of_potential_partner, ++nb_cases * sizeof(my_tuple*));
+                cases_of_potential_partner[nb_cases-1] = {i, j};
+                
 
-                if (!HIDE_PRINTS) {
-                    cout<<"\033[38;2;255;171;0mREPRODUCTS OF :\033[0m\n"<<*this <<endl;
-                    cout<<"\033[38;2;255;171;0mWITH :\033[0m\n"<<*congenere<<endl;
-                }
-                return;
+                // this->reproducting = 1;
+                // congenere->reproducting = 1;
+
+                // if (!HIDE_PRINTS) {
+                //     cout<<"\033[38;2;255;171;0mREPRODUCTS OF :\033[0m\n"<<*this <<endl;
+                //     cout<<"\033[38;2;255;171;0mWITH :\033[0m\n"<<*congenere<<endl;
+                // }
+                // return;
             }
         }
+
+
+        if (nb_cases == 0) {
+            free(cases_of_potential_partner);
+            return;
+        }
+
+
+        int random = std::rand() % nb_cases;
+        my_tuple partner_case = cases_of_potential_partner[random];
+        if (this->type.compare(WOLF) == 0)
+            congenere = world[partner_case.x][partner_case.y].get_wolf();
+        if (this->type.compare(SHEEP) == 0)
+            congenere = world[partner_case.x][partner_case.y].get_sheep();
+
+        this->reproducting = 1;
+        congenere->reproducting = 1;
+
+        if (!HIDE_PRINTS) {
+            cout<<"\033[38;2;255;171;0mREPRODUCTS OF :\033[0m\n"<<*this <<endl;
+            cout<<"\033[38;2;255;171;0mWITH :\033[0m\n"<<*congenere<<endl;
+        }
+
+        free(cases_of_potential_partner);
     }
 
 
@@ -498,7 +571,7 @@ namespace classes {
     };
 
     string CREATURE::die_today(void) const {
-        if (this->day_living >= this->day_esperance) return DEATH_AGE;
+        if (this->day_living >= this->day_esperance) return DEATH_OLDNESS;
         if (this->hunger >= this->hunger_limit) return DEATH_HUNGER;
         return "none";
     };
@@ -529,5 +602,6 @@ namespace classes {
 
     int CREATURE::get_has_moved(void) const { return this->has_moved; }
     int CREATURE::get_reproducting(void) const { return this->reproducting; }
+    my_tuple CREATURE::get_coords(void) const { return this->coords; }
 
 }

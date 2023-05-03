@@ -44,8 +44,8 @@ namespace error_messages {
             std::cout << "The given entity is not define\n";
         else if (error.type == WRONG_GIVEN_ENTITY)
             std::cout << "The given entity is not supposed to be given here\n";
-        else if (error.type == TOO_MUCH_ENTITY)
-            std::cout << "Too much entity\n";
+        else if (error.type == TOO_MUCH_CREATURES)
+            std::cout << "Too much creatures\n";
         else if (error.type == OUT_OF_RANGE)
             std::cout << "Out of range\n";
         else

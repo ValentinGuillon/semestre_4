@@ -11,13 +11,13 @@ using namespace std;
 #define MALE "male"
 #define FEMALE "female"
 
-#define LOUP "loup"
-#define MOUTON "mouton"
+#define WOLF "wolf"
+#define SHEEP "sheep"
 #define HERB "herb"
 #define MINERAL "mineral"
 
 #define DEATH_HUNGER "hunger"
-#define DEATH_AGE "age"
+#define DEATH_OLDNESS "oldness"
 
 
 string choice(string const a, string const b);
@@ -26,11 +26,13 @@ namespace classes {
     class CASE;
 
     typedef vector<vector<CASE>> WORLD;
+    // typedef CASE** WORLD;
 
     typedef struct tuple_t my_tuple;
     struct tuple_t {
         int x, y;
         friend ostream& operator<<(ostream &out, my_tuple const &obj);
+        int operator==(my_tuple &obj);
     };
 
 
@@ -42,22 +44,21 @@ namespace classes {
         my_tuple coords;
         map<string, int>* has;
         // map<string, CREATURE*> creatures;
-        CREATURE* loup;
-        CREATURE* mouton;
+        CREATURE* wolf;
+        CREATURE* sheep;
 
         public:
             friend ostream& operator<<(ostream &out, CASE const &obj);
 
             CASE(my_tuple const coords);
-            // ~CASE(void);
+            ~CASE(void);
             void display(void);
             int is_free_for(string const type) const;
-            void add_entity(string const type);
+            void add_entity(string const type, string const gender = "none");
             void move_creatures(WORLD &world, my_tuple size);
             void remove_entity(string const type, string const death_reason = "none");
-            void free_all_creatures(void);
-            CREATURE* get_loup(void) const;
-            CREATURE* get_mouton(void) const;
+            CREATURE* get_wolf(void) const;
+            CREATURE* get_sheep(void) const;
     };
 
 
@@ -78,7 +79,7 @@ namespace classes {
         public:
             friend ostream& operator<<(ostream &out, CREATURE const &obj);
 
-            CREATURE(string const type, my_tuple const coords);
+            CREATURE(string const type, my_tuple const coords, string gender);
             //set the coords to available adjacent case (including the current case) then return them
             my_tuple move(WORLD &world, my_tuple size);
             //if there is a FOOD entity on the same case, remove it, and reset HUNGER to 0
@@ -89,7 +90,7 @@ namespace classes {
             void reproduction(WORLD &world, my_tuple const size);
             //create a TYPE entity on an available adjacent case, if possible (GENDER=FEMALE, REPRODUCTION=1)
             void give_birth(WORLD &world, my_tuple const size);
-            //return the death reason (HUNGER or AGE or "none") if good conditions encounter
+            //return the death reason (HUNGER or OLDNESS or "none") if good conditions encounter
             string die_today(void) const;
             //check if has to die, then calls the method that removes thit creature
             void die(WORLD &world);
@@ -98,6 +99,7 @@ namespace classes {
             void reset_has_reproduct(void);
             int get_has_moved(void) const;
             int get_reproducting(void) const;
+            my_tuple get_coords(void) const;
             string const get_type(void) const;
             string const get_gender(void) const;
             string const get_threat(void) const;
