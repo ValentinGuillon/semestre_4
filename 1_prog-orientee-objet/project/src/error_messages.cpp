@@ -10,18 +10,6 @@ int HIDE_PRINTS;
 
 
 void my_scanf(int &input) {
-    // while(1) {
-    //     try {
-    //         printf(">");
-    //         scanf("%d", &input);
-    //     }
-    //     catch (...) {
-    //         printf("<give a number> ");
-    //         continue;
-    //     }
-    //     break;
-    // }
-
     char *p, s[100];
 
     printf(">");
