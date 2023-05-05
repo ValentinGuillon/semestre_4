@@ -65,7 +65,7 @@ namespace classes {
         out << ", sheep=" << obj.sheep;
         out << ", has{wolf=" << (*obj.has)[WOLF];
         out << ",sheep=" << (*obj.has)[SHEEP];
-        out << ",herb=" << (*obj.has)[HERB];
+        out << ",grass=" << (*obj.has)[GRASS];
         out << ",mineral=" << (*obj.has)[MINERAL] << "}";
 
         return out << "}";
@@ -75,15 +75,15 @@ namespace classes {
         out<< "{" << obj.type;
         out<< "|" << obj.gender;
         out<< ", " << obj.coords;
-        out<< ", threat=" << obj.threat;
-        out<< ", food=" << obj.food;
-        out<< ", day_living=" << obj.day_living;
+        // out<< ", threat=" << obj.threat;
+        // out<< ", food=" << obj.food;
+        out<< ", age=" << obj.day_living;
         out<< "/" << obj.day_esperance;
         out<< ", hunger=" << obj.hunger;
         out<< "/" << obj.hunger_limit;
-        out<< ", reproducting=" << obj.reproducting;
-        out<< ", has_reproduct=" << obj.has_reproduct;
-        out<< ", has_moved=" << obj.has_moved;
+        // out<< ", reproducting=" << obj.reproducting;
+        // out<< ", has_reproduct=" << obj.has_reproduct;
+        // out<< ", has_moved=" << obj.has_moved;
         return out << "}";
     }
 
@@ -114,7 +114,7 @@ namespace classes {
         
         string on_ground = RESET_COLOR;
 
-        if ((*this->has)[HERB])
+        if ((*this->has)[GRASS])
             on_ground = BACK_GREEN;
         else if ((*this->has)[MINERAL])
            on_ground = BACK_ORANGE;
@@ -190,7 +190,7 @@ namespace classes {
         this->has = new map<string, int>;
         this->has->insert(make_pair(WOLF, 0));
         this->has->insert(make_pair(SHEEP, 0));
-        this->has->insert(make_pair(HERB, 0));
+        this->has->insert(make_pair(GRASS, 0));
         this->has->insert(make_pair(MINERAL, 0));
 
         this->wolf = NULL;
@@ -240,9 +240,9 @@ namespace classes {
         if (gender == "none")
             gender = choice(MALE, FEMALE);
 
-        if (type.compare(HERB) == 0) {
+        if (type.compare(GRASS) == 0) {
             if (!HIDE_PRINTS)
-                cout<<"\033[38;2;255;171;0mHERB GROWS AT :\033[0m"<< this->coords<<endl;
+                cout<<"\033[38;2;255;171;0mGRASS GROWS AT :\033[0m"<< this->coords<<endl;
             (*this->has)[MINERAL] = 0;
             return;
         }
@@ -311,7 +311,7 @@ namespace classes {
 
         (*this->has)[type] = 0;
 
-        if (type.compare(HERB) == 0 or type.compare(MINERAL) == 0) return;
+        if (type.compare(GRASS) == 0 or type.compare(MINERAL) == 0) return;
 
         else if (type.compare(WOLF) == 0) {
             if (!HIDE_PRINTS)
@@ -384,7 +384,7 @@ namespace classes {
             this->hunger_limit = 10;
         }
         else if (type == SHEEP) {
-            this->food = HERB;
+            this->food = GRASS;
             this->threat = WOLF;
             this->gender = gender;
             this->day_esperance = 25;

@@ -8,12 +8,12 @@
 using namespace std;
 
 
-#define MALE "male"
-#define FEMALE "female"
+#define MALE /*"male"*/ "\033[38;2;44;187;250m♂\033[0m" 
+#define FEMALE /*"female"*/ "\033[38;2;255;61;248m♀\033[0m"
 
 #define WOLF "wolf"
 #define SHEEP "sheep"
-#define HERB "herb"
+#define GRASS "grass"
 #define MINERAL "mineral"
 
 #define DEATH_HUNGER "hunger"

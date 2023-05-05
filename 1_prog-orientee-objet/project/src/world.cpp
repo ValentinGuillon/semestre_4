@@ -24,30 +24,35 @@ namespace world {
         cout<< "                 ECOSYSTEM\n";
         cout<< "============================================\n";
         cout<< "               A simulation\n";
-        cout<< " where different kind of creatures coexists\n";
-        cout<< "         in a herb based 2D world\n";
+        cout<< "   where different kind of entity coexists\n";
+        cout<< "         in a grass based 2D world\n";
+        cout<< "============================================\n";
+        cout<< "  ENTITY are all kinds of object that can\n";
+        cout<< " interact/be interacted with other entities\n";
+        cout<< "  CREATURE are entities that can perform\n";
+        cout<< "      actions, like moving or eating\n";
         cout<< "============================================\n";
         cout<< "       The creatures (wolf and sheep)\n";
         cout<< "       has different type of actions:\n";
         cout<< " - MOVE, go to an adjacent empty case\n";
-        cout<< "   (\"empty\" means without creature\n";
-        cout<< "   of the same race, and without threat)\n";
-        cout<< " - EAT, eat the entity on the same case\n";
+        cout<< "   (\"empty\" means without same\n";
+        cout<< "   race-creature, and without threat)\n";
+        cout<< " - EAT, eat the food-entity on the same case\n";
         cout<< "   and reset the hunger\n";
-        cout<< " - REPRODUCT, if there is a same race\n";
-        cout<< "   creature of the opposite gender nearby,\n";
-        cout<< "   switch to \"reproducting\" state.\n";
+        cout<< " - REPRODUCT, if there is a same\n";
+        cout<< "   race-creature of the opposite gender\n";
+        cout<< "   nearby, switch to \"reproducting\" state.\n";
         cout<< "   Cannot move the next day on that state\n";
         cout<< " - GIVE BIRTH, if in \"reproducting\" state,\n";
-        cout<< "   generate a same race creature on\n";
+        cout<< "   generate a same race-creature on\n";
         cout<< "   adjacent empty case\n";
         cout<< " - DIE, delete the creature from the world.\n";
         cout<< "   If the death if caused by\n";
         cout<< "   \"oldness\" or \"hunger\",\n";
-        cout<< "   a mineral is dropped on the case\n";
+        cout<< "   a mineral was dropped on the case\n";
         cout<< "============================================\n";
         cout<< " At the start of the day, minerals generate\n";
-        cout<< "     herbs on the case, and disapear\n";
+        cout<< "     grass on the case, and disapear\n";
         cout<< "============================================\n";
     }
 
@@ -70,10 +75,10 @@ namespace world {
         temp = NULL;
 
 
-        //ajout de l'herbe
+        //adding grass
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++)
-                world[i][j]->add_entity(HERB);
+                world[i][j]->add_entity(GRASS);
         }
 
 
@@ -158,22 +163,22 @@ namespace world {
             }
         }
 
-        //herbs grows
+        //grass grows
         for (int i = 0; i < size.x; i++) {
             for (int j = 0; j < size.y; j++) {
                 actual_case = world[i][j];
                 if (actual_case->is_free_for(MINERAL)) continue;
-                if (!actual_case->is_free_for(HERB)) {
+                if (!actual_case->is_free_for(GRASS)) {
                     actual_case->remove_entity(MINERAL);
                     continue;
                 }
-                actual_case->add_entity(HERB);
+                actual_case->add_entity(GRASS);
             }
         }
 
         if (show_steps) {
             display(world, size);
-            cout << "<herbs has grown> (next: <natural deaths>)\n";
+            cout << "<grass has grown> (next: <natural deaths>)\n";
             cout << "(any number + <ENTER> to proceed)\n";
             my_scanf(input);
         }
