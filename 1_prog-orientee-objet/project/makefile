@@ -4,7 +4,7 @@ SHOW = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettr
 
 
 COURS = POO
-DEVOIR = tp-ecosystem
+DEVOIR = project-ecosystem
 PROGRAMMER = GUILLON-Valentin-20002588
 
 SRC = src/
