@@ -1,8 +1,18 @@
 
 
 import threading
+import time
 
 LOCK = threading.RLock()
+
+
+def wait_close_input():
+    while True:
+        a = str(input("At any moment, type \"STOP\" to close the server.\n"))
+        print(a)
+        if a == "STOP":
+            break
+
 
 def somme(nbs):
     res = 0
@@ -15,6 +25,7 @@ def produit(nbs):
     for nb in nbs:
         res *= nb
     return res
+
 
 
 
@@ -41,17 +52,32 @@ class ThreadWithReturn(threading.Thread):
 
 
 class Test(threading.Thread):
-    def __init__(self, id:int):
+    def __init__(self, id:str):
         threading.Thread.__init__(self)
-        self.id = id
+        self.id:str = id
+        self.stop_thread = False
     
+
+
     def run(self):
-        i = 1000
+        i = 0
         while True:
-            print(f"{self.id}: i = {i}")
-            i -= 1
-            if i < 0:
+            if self.stop_thread:
                 break
+
+            with LOCK:
+                print(f"{self.id}: i = {i}")
+                time.sleep(1)
+                i += 1
+                if i > 1000:
+                    break
+
+
+        print(f"threat {self.id} has closed\n")
+        return
+    
+    def end(self):
+        self.stop_thread = True
 
 
 
@@ -76,9 +102,20 @@ class Test(threading.Thread):
 
 
 
-a = Test(1)
-b = Test(2)
+stop = threading.Thread(target=wait_close_input)
+stop.start()
+
+
+a = Test("a")
+b = Test("b")
 
 a.start()
 b.start()
+
+
+stop.join()
+
+a.end()
+b.end()
+
 

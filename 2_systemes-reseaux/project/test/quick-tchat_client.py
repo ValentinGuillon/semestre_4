@@ -47,25 +47,27 @@ class Interface(tk.Tk):
             try:
                 server_msg = self.sckt.recv(1024)
                 server_msg = str(server_msg,'utf-8') #décode message
-                if server_msg:
-                    if server_msg == "<ready>":
-                        print(f'Serveur: {server_msg}')
-                        self.send_button.config(state='normal')
-                        self.bind('<Return>', lambda e:self.create_msg_box("client", self.txt.get()))
-                        self.input_space.config(state='normal')
-                        self.input_space.focus_set()
-                        continue
+                if not server_msg:
+                    continue
 
-                    elif server_msg == "<s'est déconnecté-e>":
-                        self.send_button.config(state='disabled')
-                        self.unbind('<Return>')
-                        self.input_space.config(state='disabled')
-                        print(f'Serveur: {server_msg}')
-                        self.create_msg_box('server', server_msg)
-                        break
-                    
+                if server_msg == "<ready>":
+                    print(f'Serveur: {server_msg}')
+                    self.send_button.config(state='normal')
+                    self.bind('<Return>', lambda e:self.create_msg_box("client", self.txt.get()))
+                    self.input_space.config(state='normal')
+                    self.input_space.focus_set()
+                    continue
+
+                elif server_msg == "<s'est déconnecté-e>":
+                    self.send_button.config(state='disabled')
+                    self.unbind('<Return>')
+                    self.input_space.config(state='disabled')
                     print(f'Serveur: {server_msg}')
                     self.create_msg_box('server', server_msg)
+                    break
+                
+                print(f'Serveur: {server_msg}')
+                self.create_msg_box('server', server_msg)
 
             except:
                 break
