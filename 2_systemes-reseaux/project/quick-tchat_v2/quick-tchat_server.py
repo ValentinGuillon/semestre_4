@@ -1,4 +1,3 @@
-#Serveur
 
 import socket
 import threading
