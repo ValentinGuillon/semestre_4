@@ -1,0 +1,17 @@
+
+INSIDE THE PROGRAM
+
+messages sent are formated like this:
+    client_id + ":::" + client_name + ":::" + "time" + ":::" + actual_msg
+exemple:
+    "7:::valentin:::14-05-23 19h01:::je programme un truc de fou là"
+note:
+    server id is 0 (zero)
+
+
+
+Problems/bugs:
+Close the client interface with the window's close button, misdisconnect him, possibly creating bugs later
+
+If client send a message containing "spliter" character (:::), the part after the "spliter" will be cut from the sended message
+
