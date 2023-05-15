@@ -257,6 +257,8 @@ class Quick_Tchat(tk.Tk):
             self.sckt.connect((common_lib.HOST, common_lib.PORT))
             #send name
             self.name = name
+        
+            time.sleep(0.2)
             common_lib.send_message(name, self.sckt, 0, " ")
 
             #receive id

@@ -135,15 +135,17 @@ def listen_for_new_client(sckt:socket.socket):
             CLIENTS.__setitem__(ID, thread_cl)
 
             #send an ID to the client
+            time.sleep(0.2)
             common_lib.send_message(ID, sckt_cl, 0, " ")
             #send nb of connected to the client
+            time.sleep(0.2)
             common_lib.send_message(NB_CONNECTED, sckt_cl, 0, " ")
             
 
-            if not test_new_socket(sckt_cl):
-                print("Test failed,  connection failed")
-                continue
-            print("Test passed")
+            #if not test_new_socket(sckt_cl):
+            #    print("Test failed,  connection failed")
+            #    continue
+            #print("Test passed")
 
             thread_cl.start()
             print(f"Connection of {name_cl} (id={ID})")
