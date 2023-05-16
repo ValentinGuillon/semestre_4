@@ -29,22 +29,22 @@
 
 
 
-COURS = nom_du_cours
-DEVOIR = TPx
-PROGRAMMER = NOM-Prenom-nEtudiant
+COURS= nom_du_cours
+DEVOIR= TPx
+PROGRAMMER= NOM-Prenom-nEtudiant
 
-SRC = src/#dossier dans lequel on met les fichiers sources (.c/cpp sans main)
-INCLUDE = include/#dossier dans lequel on met les headers (.h/hpp)
+SRC= src/#dossier dans lequel on met les fichiers sources (.c/cpp sans main)
+INCLUDE= include/#dossier dans lequel on met les headers (.h/hpp)
 
-DISTNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)#nom du dossier pour la création de l'archive
-FILESFORDIST = makefile *$(EXT)#liste des fichiers à mettre dans le zip
+DISTNAME= $(COURS)_$(DEVOIR)_$(PROGRAMMER)#nom du dossier pour la création de l'archive
+FILESFORDIST= makefile *$(EXT)#liste des fichiers à mettre dans le zip
 
-CC = gcc#ou g++
-EXT = .c#ou .cpp
-EXTLIB = .h #ou .hpp
-CFLAGS = -Wall -Wextra#-g pour avoir les numéro de ligne lors du bebug avec gdb
+CC= gcc#ou g++
+EXT= .c#ou .cpp
+EXTLIB= .h #ou .hpp
+CFLAGS= -Wall -Wextra#-g pour avoir les numéro de ligne lors du bebug avec gdb
 
-PROGS = test#exo1 exo2 ...#liste des exécutables/cibles. Faire en sorte que chaque exé ai sa cible dans le makefile
+PROGS= test#exo1 exo2 ...#liste des exécutables/cibles. Faire en sorte que chaque exé ai sa cible dans le makefile
 
 
 

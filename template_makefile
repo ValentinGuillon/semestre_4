@@ -22,7 +22,7 @@ CC= #gcc or g++
 EXT= #.c ou .cpp
 EXTINCL= #.h ou .hpp
 CFLAGS= -Wall -Wextra -g -fsanitize=address #-std=c++17
-PROG = 
+PROGS= 
 
 
 # exemple:
