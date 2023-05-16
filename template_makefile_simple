@@ -1,17 +1,31 @@
 
 # Template d'un Makefile, par Valentin GUILLON
+# Complet (avec un DIST) et avec des explications
 
 # Vous avez des exemples de compilation à la fin du fichier (après "clean:")
 
-# Tous les fichiers présent dans les dossier $(SRC) et $(INCLUDE) seront automatiquement inclus dans le zip, lors du "make dist" (donc pas besoin de les mentionner dans FILESFORDIST=)
+# Tous les fichiers présents dans les dossiers $(SRC) et $(INCLUDE) seront automatiquement inclus dans le zip, lors du "make dist" (donc pas besoin de les mentionner dans FILESFORDIST=)
 
-# Pour chaque programme à compiler, il faudra ajouter le nom de l'exécutable que l'on veut obtenir, dans PROGS=, FILESFORDIST=, ainsi qu'écrire une cible du même nom
+# Pour chaque programme à compiler, il faudra ajouter le nom de l'exécutable que l'on veut obtenir, dans PROGS=, ainsi qu'écrire une cible du même nom
 # Exemple: on veux compiler exo.c
-#	FILESFORDIST = ... exo.c
 #	PROGS = ... exo
-#	all:...
+#	all: $(PROGS)
 #	exo:
 #   	gcc exo.c -o exo
+
+# Notations particulières:
+#   $@ fait référence à la cible
+#   $^ fait référence AUX dépendanceS
+# Exemple:
+# program: lib1.o lib2.o
+#   gcc $@.c $^ -o $@
+#   #équivaut à:
+#   gcc program.c lib1.o lib2.o -o program
+    
+
+# ===============================================
+# ============== DÉBUT DU MAKEFILE ==============
+# ===============================================
 
 
 
@@ -19,59 +33,35 @@ COURS = nom_du_cours
 DEVOIR = TPx
 PROGRAMMER = NOM-Prenom-nEtudiant
 
-SRC = src/#dossier dans lequel on met les fichiers sources (.c sans main)
-INCLUDE = include/#dossier dans lequel on met les headers (.h)
+SRC = src/#dossier dans lequel on met les fichiers sources (.c/cpp sans main)
+INCLUDE = include/#dossier dans lequel on met les headers (.h/hpp)
+
+DISTNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)#nom du dossier pour la création de l'archive
+FILESFORDIST = makefile *$(EXT)#liste des fichiers à mettre dans le zip
 
 CC = gcc#ou g++
-DISTDIRNAME = $(COURS)_$(DEVOIR)_$(PROGRAMMER)#nom du dossier pour la création de l'archive
-FILESFORDIST = makefile#exo1.c exo2.c ... #liste des fichiers à mettre dans le zip
+EXT = .c#ou .cpp
+EXTLIB = .h #ou .hpp
+CFLAGS = -Wall -Wextra#-g pour avoir les numéro de ligne lors du bebug avec gdb
 
-CFLAGS = -Wall -Wextra -g#-g est pour avoir les numéro de ligne lors du bebug avec gdb
-PROGS = #exo1 exo2 ...  #liste des exécutables/cibles. Faire en sorte que chaque exé ai sa cible dans le makefile
+PROGS = test#exo1 exo2 ...#liste des exécutables/cibles. Faire en sorte que chaque exé ai sa cible dans le makefile
 
 
 
-all: $(PROGS)
+all: clean $(PROGS)
 
 
 # cible: dependances
-# 	commande
+# 	commandes
 
 
-
-#exemples de cible
-
-
-# processus pour compiler un seul fichier .c
-# (ex: exo.c)
-# FILESFORDIST = ... exo.c
-# PROGS = ... exo
-
-# exo:
-# 	$(CC) $(CFLAGS) exo.c -o exo
+# Exemples de compilation à la fin du fichier (après "clean:")
 
 
-# processus pour compiler avec un fichier source et un header
-# (ex: exo.c, src/fonctions.c et include/fonctions.h)
-# FILESFORDIST = ... exo.c
-# PROGS = ... exo
-
-# exo: fonctions.o
-# #on compile exo.c en y incluant $(SRC)fonctions.o
-# #-I<nom_chemin>, permet d'indiquer où est le header (.h) de $(SRC)fonctions.c
-# 	$(CC) $(CFLAGS) $(SRC)fonctions.o -I$(INCLUDE) exo.c -o exo
-
-# fonctions.o:
-# #génération de l'objet $(SRC)fonctions.o
-# 	$(CC) $(CFLAGS) -c $(SRC)fonctions.c -o $(SRC)fonctions.o
-
-
-# ou, plus concis, avec une dépendance implicite (rappel: $^ == dépendances de la cible actuel)
-# exo: $(SRC)fonctions.o
-# 	$(CC) $(CFLAGS) $^ -I$(INCLUDE) exo.c -o exo
-
-
-
+test: fonctions.o
+	$(CC) $(CFLAGS) $@$(EXT) $^ -I$(INCLUDE) -o $@
+fonctions.o:
+	$(CC) $(CFLAGS) -c $(SRC)fonctions$(EXT) -I$(INCLUDE) -o $@
 
 
 
@@ -79,21 +69,22 @@ distdir:
 # on recréé un dossier
 # on y met les copies des fichiers à mettre dans le zip
 # on vérifie que les dossiers $(SRC) et $(INCLUDE) existe, avant de copier les fichiers qu'ils contiennent
-	mkdir $(DISTDIRNAME)
-	cp $(FILESFORDIST) $(DISTDIRNAME)
-	if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTDIRNAME); fi
-	if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTDIRNAME); fi
+	rm -rf $(DISTNAME) #on supprime le dossier $(DISTNAME)
+	mkdir $(DISTNAME)
+	cp $(FILESFORDIST) $(DISTNAME)
+	if [ -d $(SRC) ]; then cp -r $(SRC) $(DISTNAME); fi #si le dossier $(SRC) existe, alors on le copie dans $(DISTNAME)
+	if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTNAME); fi #si le dossier $(INCLUDE) existe, alors on le copie dans $(DISTNAME)
 
 dist: clean distdir
 # on zip le dossier qu'on a rempli dans la cible distdir
 # on supprime le dossier
-	zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTDIRNAME)
-	rm -rf $(DISTDIRNAME)
+	zip -r $(COURS)_$(DEVOIR)_$(PROGRAMMER).zip $(DISTNAME)
+	rm -rf $(DISTNAME)
 
 
 clean:
 # suppression des tous les .o
-# suppression des tous les executable (mentionnés dans PROGS=)
+# suppression des tous les executables (mentionnés dans PROGS=)
 	find . -name "*.o" -delete
 	rm -f $(PROGS)
 
@@ -106,59 +97,27 @@ clean:
 
 
 
-
+#exemples de compilation:
 
 
 # processus pour compiler un seul fichier .c
 # (ex: exo.c)
-# FILESFORDIST = ... exo.c
 # PROGS = ... exo
 
 # exo:
-# 	$(CC) $(CFLAGS) exo.c -o exo
-
-
-
-
+# 	$(CC) $(CFLAGS) $@$(EXT) -o $@
 
 
 
 # processus pour compiler avec un fichier source et un header
 # (ex: exo.c, src/fonctions.c et include/fonctions.h)
-# FILESFORDIST = ... exo.c
 # PROGS = ... exo
 
 # exo: fonctions.o
 # #on compile exo.c en y incluant $(SRC)fonctions.o
-# #-I<nom_chemin>, permet d'indiquer où est le header (.h) de $(SRC)fonctions.c
-# 	$(CC) $(CFLAGS) $(SRC)fonctions.o -I$(INCLUDE) exo.c -o exo
+# #-I<nom_chemin>, indique dans quel dossier chercher des .h/hpp en priorité
+# 	$(CC) $(CFLAGS) $@$(EXT) $^ -I$(INCLUDE) -o $@
 
 # fonctions.o:
-# #génération de l'objet $(SRC)fonctions.o
-# 	$(CC) $(CFLAGS) -c $(SRC)fonctions.c -o $(SRC)fonctions.o
-
-
-# ou, plus concis, avec une dépendance implicite (rappel: $^== dépendances de la cible actuel)
-# exo: $(SRC)fonctions.o
-# 	$(CC) $(CFLAGS) $^ -I$(INCLUDE) exo.c -o exo
-
-
-
-
-
-
-
-# processus pour compiler avec une librairie statique (.a)
-# (ex: exo.c, src/fonctions.c et include/fonctions.h)
-# FILESFORDIST = ... exo.c
-# PROGS = ... exo
-
-# exo: fonctions.a
-# # création de l'éxécutable avec la librairie créé dans la cible libfonctions.a
-# # puis suppression de celle-ci
-# # options de la compilation; -I<dossier des .h> -L<dossier de la lib> (.a)> -l<nom de la lib> (à noter que la lib doit obligatoirement s'appeler "lib<nom>.a")
-# 	$(CC) $(FLAGS) exo.c -I$(INCLUDE) -L. -lfonctions -o exo
-
-# fonctions.a:
-# 	$(CC) -c $(SRC)fonctions.c
-# 	ar -rsc libfonctions.a fonctions.o
+# #génération de l'objet fonctions.o de src/fonctions.c
+# 	$(CC) $(CFLAGS) -c $(SRC)fonctions$(EXT) -I$(INCLUDE) -o $@
