@@ -47,8 +47,8 @@ distdir:
 	$(HIDE)if [ -d $(INCLUDE) ]; then cp -r $(INCLUDE) $(DISTNAME); fi
 
 dist: clean distdir
-	$(HIDE)rm -f [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip
-	$(HIDE)zip -r [$(COURS)]_$(DEVOIR)_$(PROGRAMMER).zip $(DISTNAME)
+	$(HIDE)rm -f $(DISTNAME).zip
+	$(HIDE)zip -r $(DISTNAME).zip $(DISTNAME)
 	@echo "$(COLOR_OPEN)zip created.$(COLOR_CLOSE)"
 	$(HIDE)rm -rf $(DISTNAME)
 
