@@ -28,11 +28,11 @@ def set_NB_CONNECTED(new_val:int):
 
 
 class ThreadClient(threading.Thread):
-    def __init__(self, id:int, name:str, sckt:socket.socket):
+    def __init__(self, id:int, name:str, connection:socket.socket):
         threading.Thread.__init__(self)
         self.id = id
         self.name = name
-        self.sckt:socket.socket = sckt
+        self.connection:socket.socket = connection
 
 
     def run(self):
@@ -40,7 +40,7 @@ class ThreadClient(threading.Thread):
 
 
     def get_socket(self) -> socket.socket:
-        return self.sckt
+        return self.connection
 
     def get_name(self) -> str:
         return self.name
@@ -50,8 +50,8 @@ class ThreadClient(threading.Thread):
     def listen_messages(self):
         try:
             while True:
-                receved_msg = self.sckt.recv(1024)
-                receved_msg = str(receved_msg, 'utf-8') #décode message
+                receved_msg = str(self.connection.recv(1024), 'utf-8')
+
                 # sender_id = int(common_lib.extract_from_formated_msg(receved_msg, "id"))
                 # current_time = common_lib.extract_from_formated_msg(receved_msg, "time")
                 sender_name = common_lib.extract_from_formated_msg(receved_msg, "name")
@@ -66,7 +66,7 @@ class ThreadClient(threading.Thread):
                 #envoyer le message aux autres clients
                 send_message_to_all(msg, self.id)
 
-            self.sckt.close()
+            self.connection.close()
         except:
             return
 
@@ -99,57 +99,44 @@ def wait_close_input():
 
 
 
-def test_new_socket(sckt:socket.socket) -> bool:
-    common_lib.send_message("connected ?", sckt, 0, "<test>")
-    answer = str(sckt.recv(1024), 'utf-8')
-    answer = common_lib.extract_from_formated_msg(answer, "msg")
-    if answer == "<connected !>":
-        return True
-    return False
-
-
-
-def listen_for_new_client(sckt:socket.socket):
+def listen_for_new_client(server:socket.socket):
     global CLIENTS
 
-    sckt.listen()
+    server.listen()
 
     while True:
         if STOP_PROG:
             break
         try:
-            sckt_cl, _adress = sckt.accept()
+            connection, _adress = server.accept()
             if STOP_PROG:
                 break
-            print("\nconnection incoming...")
+            print("\nConnection incoming...")
 
             #waiting message containing the client name
-            name_cl = str(sckt_cl.recv(1024), 'utf-8')
+            name_cl = str(connection.recv(1024), 'utf-8')
             name_cl = common_lib.extract_from_formated_msg(name_cl, "msg")
 
 
             #add the client to the dict
             set_ID(ID+1)
             set_NB_CONNECTED(NB_CONNECTED+1)
-            thread_cl = ThreadClient(ID, name_cl, sckt_cl)
+            thread_cl = ThreadClient(ID, name_cl, connection)
             CLIENTS.__setitem__(ID, thread_cl)
 
-            #send an ID to the client
-            time.sleep(0.2)
-            common_lib.send_message(ID, sckt_cl, 0, " ")
-            #send nb of connected to the client
-            time.sleep(0.2)
-            common_lib.send_message(NB_CONNECTED, sckt_cl, 0, " ")
-            
+            # time.sleep(0.2)
+            # common_lib.send_message("aled", connection, 0, " ")
+            # common_lib.send_message(f"{ID}..!!..{NB_CONNECTED}", connection, 0, " ")>
 
-            #if not test_new_socket(sckt_cl):
-            #    print("Test failed,  connection failed")
-            #    continue
-            #print("Test passed")
+            #send an ID and nb of connected to the client
+            time.sleep(0.2)
+            common_lib.send_message(f"{ID}..!!..{NB_CONNECTED}" , connection, 0, " ")
 
-            thread_cl.start()
             print(f"Connection of {name_cl} (id={ID})")
             send_message_to_all(f'<{name_cl} has connected>', server_indication=f"connection of {ID}")
+            thread_cl.start()
+
+
         except Exception as e:
             print("Imcoming connection failed and canceled")
             print(e)
@@ -184,7 +171,7 @@ def disconnect_client(key:int, reason:str):
 def send_message_to_all(msg:str, sender:int = 0, server_indication:str = ""):
     for _key, client in CLIENTS.items():
         name = ""
-        sckt = client.get_socket()
+        connection = client.get_socket()
 
         # message from server
         if sender == 0:
@@ -193,10 +180,7 @@ def send_message_to_all(msg:str, sender:int = 0, server_indication:str = ""):
         else:
             name = CLIENTS[sender].get_name()
 
-        common_lib.send_message(msg, sckt, sender, name)
-
-
-
+        common_lib.send_message(msg, connection, sender, name)
 
 
 
@@ -220,14 +204,15 @@ def send_message_to_all(msg:str, sender:int = 0, server_indication:str = ""):
 
 def main():
     #socket initialisation
-    sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sckt.bind((common_lib.HOST,common_lib.PORT))
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((common_lib.HOST,common_lib.PORT))
+
     print("Socket initiated")
 
 
 
     #listen to clients connection
-    listen_arrivals = threading.Thread(target=listen_for_new_client, args=(sckt,))
+    listen_arrivals = threading.Thread(target=listen_for_new_client, args=(server,))
     listen_arrivals.start()
 
     #create and start thread that allow to close server via a defined input
@@ -235,7 +220,7 @@ def main():
     stop.start()
     stop.join()
 
-    #server closed by the user
+    #===== server closed by the user
 
     #stop listening for new connections
     fake_connection()
@@ -245,7 +230,7 @@ def main():
         disconnect_client(key, "<server closed>")
 
 
-    sckt.close()
+    server.close()
     print("\nServer has closed")
 
 

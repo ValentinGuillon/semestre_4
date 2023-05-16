@@ -27,8 +27,8 @@ def switch_THREAD_RUNNING():
 class Quick_Tchat(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
-        self.sckt:socket.socket = None
-        self.thr_listen:threading.Thread
+        self.connection:socket.socket = None
+        self.thr_listen:threading.Thread = None
 
         self.name:str = ""
         self.id:int = 0
@@ -42,11 +42,22 @@ class Quick_Tchat(tk.Tk):
         self.geometry('400x500')
         self.config(bg='orange')
 
-
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
+        # root.protocol("WM_DELETE_WINDOW", on_closing)
+        self.protocol("WM_DELETE_WINDOW", self.app_closed)
+
         self.interface_disconnected()
+
+
+
+    def app_closed(self):
+        if self.connected:
+            self.interface_disconnected()
+        self.destroy()
+        print("\nwindow closed")
+        pass
 
 
 
@@ -76,11 +87,13 @@ class Quick_Tchat(tk.Tk):
 
         self.var_name = tk.StringVar()
 
+        #widgets creation
         self.entry_name = tk.Entry(self.discon_interf, textvariable=self.var_name, justify='center')
         self.label_info = tk.Label(self.discon_interf, bg='orange', justify='center')
         self.btn_connect = tk.Button(self.discon_interf, text='Connect', command=lambda:self.interface_connected(self.var_name.get(), self.discon_interf))
         self.btn_exit = tk.Button(self.discon_interf, text='Exit', command=self.destroy)
 
+        #widgets placement
         self.discon_interf.grid()
         self.entry_name.grid(row=1, column=0)
         self.btn_connect.grid(row=2, column=0)
@@ -183,7 +196,6 @@ class Quick_Tchat(tk.Tk):
 
 
 
-
         # === WIDGETS PLACEMENT ===
         #global frames
         self.connect_interf.grid()
@@ -222,10 +234,10 @@ class Quick_Tchat(tk.Tk):
 
 
     def disconnect(self):
-        if not self.sckt:
+        if not self.connection:
             return
 
-        common_lib.send_message('<client disconnection>', self.sckt, self.id, self.name)
+        common_lib.send_message('<client disconnection>', self.connection, self.id, self.name)
         self.connected = False
         self.thr_listen = None
         print("\nDisconnected")
@@ -248,30 +260,25 @@ class Quick_Tchat(tk.Tk):
             self.start_reset_label_info_thread()
             return False
 
-	
-        #initiate socket
-        self.sckt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        print("\nEtablishing connection...")
         try:
-            print("\nEtablishing connection...")
-            self.sckt.connect((common_lib.HOST, common_lib.PORT))
+            self.connection.connect((common_lib.HOST, common_lib.PORT))
             #send name
             self.name = name
         
             time.sleep(0.2)
-            common_lib.send_message(name, self.sckt, 0, " ")
+            common_lib.send_message(name, self.connection, 0, " ")
 
-            #receive id
-            msg = self.sckt.recv(1024)
-            msg = str(msg, 'utf-8')
-            new_id = int(common_lib.extract_from_formated_msg(msg, "msg"))
-            self.id = new_id
 
-            #received nb_connected
-            msg = self.sckt.recv(1024)
-            msg = str(msg, 'utf-8')
-            nb_connected = int(common_lib.extract_from_formated_msg(msg, "msg"))
-            self.nb_connected = nb_connected
+            #receive id and nb_connected
+            msg_received = str(self.connection.recv(1024), 'utf-8')
+            infos:list = common_lib.extract_from_formated_msg(msg_received, "msg").split("..!!..")
+            self.id = int(infos[0])
+            self.nb_connected = int(infos[1])
+
 
             print(f'Connection successful to server "{common_lib.HOST}"')
         except:
@@ -290,9 +297,16 @@ class Quick_Tchat(tk.Tk):
     def send_message(self, msg:str):
         if not msg:
             return
-        
+
+        if common_lib.SPLITER in msg:
+            print(f"\nMessage contains illegal character ({common_lib.SPLITER})")
+            msg = f"<Message contains illegal character>\n<({common_lib.SPLITER})>"
+            c_time = time.strftime("%d-%m-%y %Hh%M")
+            self.create_msg_box(msg, current_time=c_time, clear_msg_bar=False)
+            return
+
         self.txt.set("")
-        msg = common_lib.send_message(msg, self.sckt, self.id, self.name)
+        msg = common_lib.send_message(msg, self.connection, self.id, self.name)
 
 
 
@@ -302,7 +316,7 @@ class Quick_Tchat(tk.Tk):
                 break
 
             try:
-                received_msg = str(self.sckt.recv(1024), 'utf-8')
+                received_msg = str(self.connection.recv(1024), 'utf-8')
                 print("\nmsg received:", received_msg)
                 if not received_msg:
                     continue
@@ -317,23 +331,20 @@ class Quick_Tchat(tk.Tk):
                     self.create_msg_box(msg, current_time, sender_id, sender_name)
                     continue
 
-
+                server_special_info = sender_name
                 #message from server
-                if sender_name == "<test>":
-                    print("Test from server received")
-                    msg = common_lib.send_message("<connected !>", self.sckt, self.id, self.name)
-                elif "disconnection of" in sender_name:
+                if "disconnection of" in server_special_info:
                     self.nb_connected -= 1
-                    if not int(sender_name.split("disconnection of ")[1]) == self.id:
+                    if not int(server_special_info.split("disconnection of ")[1]) == self.id:
                         self.create_msg_box(msg, current_time)
-                elif "connection of" in sender_name:
+                elif "connection of" in server_special_info:
                     self.nb_connected += 1
-                    if not int(sender_name.split("connection of ")[1]) == self.id:
+                    if not int(server_special_info.split("connection of ")[1]) == self.id:
                         self.create_msg_box(msg, current_time)
-                elif "server closed" in sender_name:
+                elif "server closed" in server_special_info:
                     self.nb_connected = 0
                     self.create_msg_box(msg, current_time)
-                    self.sckt.close()
+                    self.connection.close()
 
                 self.update_interface_connected()
  
@@ -349,7 +360,7 @@ class Quick_Tchat(tk.Tk):
             self.tchat.insert(tk.END, f'\n{current_time}', side)
 
 
-    def create_msg_box(self, msg:str, current_time:str="", sender_id:int = 0, sender:str = "server"):
+    def create_msg_box(self, msg:str, current_time:str, sender_id:int = 0, sender_name:str = "server", clear_msg_bar=True):
         if not msg:
             return
 
@@ -368,20 +379,21 @@ class Quick_Tchat(tk.Tk):
         #message from someone else
         else:
             self.create_msg_box_time(current_time, 'left')
-            self.tchat.insert(tk.END, f'\n{sender}:\n{msg}\n', 'left')
+            self.tchat.insert(tk.END, f'\n{sender_name}:\n{msg}\n', 'left')
 
 
         self.tchat.config(state='disabled')
-
-        self.txt.set("")
         self.tchat.see(tk.END)
+
+        if clear_msg_bar:
+            self.txt.set("")
 
 
 
 
 def main():
-    win = Quick_Tchat()
-    win.mainloop()
+    app = Quick_Tchat()
+    app.mainloop()
 
 
 if __name__ == "__main__":
