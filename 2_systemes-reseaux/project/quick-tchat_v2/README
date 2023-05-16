@@ -11,7 +11,9 @@ note:
 
 
 Problems/bugs:
-Close the client interface with the window's close button, misdisconnect him, possibly creating bugs later
+...
 
-If client send a message containing "spliter" character (:::), the part after the "spliter" will be cut from the sended message
 
+Solved pb/bugs:
+- Close the client interface with the window's close button, misdisconnect him, possibly creating bugs later
+- If client send a message containing "spliter" character (:::), the part after the "spliter" will be cut from the sended message
