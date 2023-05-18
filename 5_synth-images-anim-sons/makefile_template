@@ -3,7 +3,7 @@ HIDE = @ #mettre @ pour masquer les commandes dans le terminal, et ne rien mettr
 
 
 
-COURS= nom_du_cours
+COURS= synth-images-anim-sons
 DEVOIR= devoir_x
 PROGRAMMER= GUILLON-Valentin-20002588
 
@@ -18,34 +18,62 @@ COLOR_CLOSE= \033[0m
 COLOR_OPEN= $(COLOR_CLOSE)\033[38;2;255;171;0m
 
 
-CC= gcc#gcc or g++
-EXT= .c#.c ou .cpp
-EXTINCL= .h#.h ou .hpp
-CFLAGS= -Wall -Wextra -g -fsanitize=address #-std=c++17
-CPPFLAGS= -I. -I$(HOME)/local/include $(shell sdl2-config --cflags)
-LDFLAGS= -lm -L$(HOME)/local/lib -lGL4Dummies $(shell sdl2-config --libs)
-PROGS =
+CC= gcc
+EXT= .c
+EXTINCL= .h
+CFLAGS= -Wall -O3 -Wextra -g #-fsanitize=address
+CPPFLAGS= -I. #-I$(HOME)/local/include $(shell sdl2-config --cflags)
+LDFLAGS= -lm #-L$(HOME)/local/lib -lGL4Dummies $(shell sdl2-config --libs)
+
+# !!! DO NOT REMOVE !!!
+ifneq (,$(shell ls -d /usr/local/include 2>/dev/null | tail -n 1))
+	CPPFLAGS += -I/usr/local/include
+endif
+ifneq (,$(shell ls -d $(HOME)/local/include 2>/dev/null | tail -n 1))
+	CPPFLAGS += -I$(HOME)/local/include
+endif
+ifneq (,$(shell ls -d /usr/local/lib 2>/dev/null | tail -n 1))
+	LDFLAGS += -L/usr/local/lib
+endif
+ifneq (,$(shell ls -d $(HOME)/local/lib 2>/dev/null | tail -n 1))
+	LDFLAGS += -L$(HOME)/local/lib
+endif
+ifeq ($(shell uname),Darwin)
+	MACOSX_DEPLOYMENT_TARGET = 10.8
+        CFLAGS += -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
+        LDFLAGS += -framework OpenGL -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
+else
+        LDFLAGS += -lGL
+endif
+
+CPPFLAGS += $(shell sdl2-config --cflags)
+LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs)
+# !!! DO NOT REMOVE !!! FIN
+
+PROG = name
+SOURCES = $(PROG).c
+OBJ = $(SOURCES:.c=.o)
 
 
-# exemple:
-# 	$(HIDE)$(CC) $(CFLAGS) $@$(EXT) -o $@
-# 	@echo "$(COLOR_OPEN)$@ compiled.$(COLOR_CLOSE)"
-
-
-all: clean $(PROGS) clean_soft
+all: clean $(PROG) clean_soft
+	# ./$(PROG)
 
 
 # cible: dependance
 # 	commande
 
-
-
-# main: functions.o
-# 	$(HIDE)$(CC) $(CFLAGS) $(CPPFLAGS) $^ -L$(INCLUDE) $@$(EXT) -o $@
+# exemple:
+# 	$(HIDE)$(CC) $(CFLAGS) $@$(EXT) -o $@
 # 	@echo "$(COLOR_OPEN)\"$@\" compiled.$(COLOR_CLOSE)"
 
-# functions.o:
-# 	$(HIDE)$(CC) $(CFLAGS) $(LDFLAGS) -L$(INCLUDE) -c $(SRC)functions$(EXT) -o $@
+
+$(PROG): $(OBJ)
+	$(HIDE)$(CC) $(OBJ) $(LDFLAGS) -o $(PROG)
+	@echo "$(COLOR_OPEN)\"$@\" compiled.$(COLOR_CLOSE)"
+
+%.o: %.c
+	$(HIDE)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
 
 
 
@@ -70,7 +98,7 @@ clean_soft:
 
 clean:
 	$(HIDE)find . -name "*.o" -delete
-	$(HIDE)rm -f $(PROGS)
+	$(HIDE)rm -f $(PROG)
 	@echo "$(COLOR_OPEN)Cleaned.$(COLOR_CLOSE)"
 
 
@@ -86,7 +114,7 @@ clean:
 
 # processus pour compiler avec un fichier source et un header
 # (ex: exo.c, src/fonctions.c et include/fonctions.h)
-# PROGS = ... exo
+# PROG = ... exo
 
 # exo: fonctions.o
 # #on compile exo.c en y incluant $(SRC)fonctions.o
@@ -105,7 +133,7 @@ clean:
 
 # processus pour compiler avec une librairie statique (.a)
 # (ex: exo.c, src/fonctions.c et include/fonctions.h)
-# PROGS = ... exo
+# PROG = ... exo
 
 # exo: fonctions.a
 # # création de l'éxécutable avec la librairie créé dans la cible libfonctions.a
