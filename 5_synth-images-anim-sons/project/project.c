@@ -1,0 +1,508 @@
+
+#include <GL4D/gl4dp.h>
+#include <GL4D/gl4duw_SDL2.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+
+#define W 300
+#define H 300
+
+#define BPM 81
+#define TEMPO 4
+#define BEAT_MS_DURATION ((60000 / BPM) *TEMPO) / 4
+#define TICKS_BY_BEAT 10
+
+static int tempo = 0; //current moment of the tempo
+static int tick = 0; //current ticks of the beat
+
+// static GLuint * pixels1 = NULL;
+
+
+typedef struct coords_t {
+    int x;
+    int y;
+} my_coords;
+
+
+
+
+
+//appel la méthode gl4duClean()
+void clean(void);
+int min(int a, int b);
+int max(int a, int b);
+//échange deux points
+void swap(my_coords *a, my_coords *b);
+//retourne 1 si "c" est hors du rectangle "limits"
+int out_of_limits(my_coords c, my_coords limits_p0, my_coords limits_p1);
+//place un point à une position aléatoire
+void drawRandomPoint(GLuint *pixels, my_coords limits);
+//place un point coloré
+void drawPoint(GLuint *pixels, my_coords point, my_coords limits, GLuint color);
+//place un point. La position change à chaque beat, et la couleur tous les 5 ticks
+void drawPoint_by_beat(GLuint *pixels, my_coords limits);
+//place un rectangle. La position et la color change tous les 4 beats
+void drawRect_by_4_beat(GLuint *pixels, my_coords limits);
+//place des pixels colorés de p0 à p1
+void drawLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLuint color);
+//place des pixels colorés de p0 à p1 (si la ligne pas strictement verticale ou horizontal, la fonction ne fait rien)
+void drawStraightLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLuint color);
+
+//animation d'un rectangle dans une position et couleur aléatoire (chaque appel effectue rend un affichage différent en fonction selon l'étape de l'anim)
+void drawRect_explosion(GLuint *pixels, my_coords limits);
+//place des lignes dans tous les sens en partant d'un point définit (donne une illusion de vitesse)
+void drawSpeed(GLuint *pixels, my_coords limits);
+//appel les différentes animations selon un tracé prédéfini, pour être synchro avec la musique
+void draw(void);
+
+
+
+
+
+int main(int argc, char** argv) {
+    srand(time(NULL));
+
+    //create window
+    if (!gl4duwCreateWindow(argc, argv, "Project", 10, 10, W, H, GL4DW_SHOWN))
+        return 1;
+
+    //window quadrillage (or how much pixels on the window) 
+    gl4dpInitScreenWithDimensions(W/2, H/2);
+    atexit(clean);
+
+
+    // int w = gl4dpGetWidth(), h = gl4dpGetHeight();
+    // pixels1 = malloc(w*h * sizeof(GLuint));
+
+    //place pixels
+    gl4duwDisplayFunc(draw);
+    //determine where to place pixels
+    // gl4duwIdleFunc(...);
+
+
+    gl4duwMainLoop();
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+void draw(void) {
+    SDL_Delay(BEAT_MS_DURATION / TICKS_BY_BEAT);
+
+    //next tick/temp
+    tick++;
+    if (tick == TICKS_BY_BEAT+1) {
+        tick = 1;
+        tempo ++;
+    }
+    if (tempo == TEMPO+1)
+        tempo = 1;
+
+
+    static int phase = 0;
+    if (tick == 1)
+        phase++;
+    if (phase == 5)
+        phase = 1;
+
+
+    gl4dpClearScreen();
+
+    //get window size and pixels
+    int w = gl4dpGetWidth(), h = gl4dpGetWidth();
+    my_coords screen_size = {w, h};
+    GLuint * pixels = gl4dpGetPixels();
+
+    //draw
+
+    // if (phase >= 1 && phase < 3)
+    //     drawRect_explosion(pixels, screen_size);
+    // else if (phase >= 3 && phase < 5)
+        drawSpeed(pixels, screen_size);
+
+
+
+    // drawRect_by_4_beat(pixels, screen_size);
+    drawPoint_by_beat(pixels, screen_size);
+
+
+    gl4dpUpdateScreen(NULL);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+void clean(void) {
+  gl4duClean(GL4DU_ALL);
+}
+
+
+
+
+
+int min(int a, int b) { if (a<b) return a; return b; }
+int max(int a, int b) { if (a>b) return a; return b; }
+
+void swap(my_coords *a, my_coords *b) {
+    my_coords temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+
+
+int out_of_limits(my_coords c, my_coords limits_p0, my_coords limits_p1) {
+    if (c.x < limits_p0.x || c.x >= limits_p1.x)
+        return 1; 
+    if (c.y < limits_p0.y || c.y >= limits_p1.y)
+        return 1;
+    return 0;
+}
+
+
+
+void drawRandomPoint(GLuint *pixels, my_coords limits) {
+    my_coords point = {rand()%limits.x, rand()%limits.y};
+    pixels[point.x + point.y*limits.x] = RGB(255, 0, 0);
+}
+
+
+
+void drawPoint(GLuint *pixels, my_coords point, my_coords limits, GLuint color) {    
+    pixels[point.x + point.y*limits.x] = color;
+}
+
+
+void drawPoint_by_beat(GLuint *pixels, my_coords limits) {
+
+    static my_coords point = {0, 0};
+    static GLuint color = RGB(0, 0, 0);
+
+    if (tick == 1)
+        point = (my_coords){rand() % limits.x, rand() % limits.y};
+
+    if (tick%5 == 1)
+        color = RGB(rand()%255, rand()%255, rand()%255);
+    
+    pixels[point.x + point.y*limits.x] = color;
+}
+
+void drawRect_by_4_beat(GLuint *pixels, my_coords limits) {
+    static GLuint color = RGB(0, 0, 0);
+    static my_coords p0 = {0, 0};
+    static my_coords p1 = {0, 0};
+
+
+    if (tempo == 1 && tick == 1) {
+        color = RGB(rand()%255, rand()%255, rand()%255);
+
+        p0 = (my_coords){rand()% (limits.x/2), rand()% (limits.y/2)};
+        p1 = (my_coords){p0.x+1 + rand()% ((limits.x/2)-1), p0.y+1 + rand()% ((limits.y/2)-1)};
+    }
+
+    for (int i = p0.x; i < p1.x; i++) {
+        for (int j = p0.y; j < p1.y; j++)
+            pixels[i + j*limits.x] = color;
+    }
+}
+
+
+
+void drawStraightLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLuint color) {
+    if (!((p0.x == p1.x) || (p0.y == p1.y))) {
+        printf("error in drawStraightLine: the line must be straight.\n");
+        return;
+    }
+
+    if (p0.x > p1.x || p0.y > p1.y) {
+        swap(&p0, &p1);
+    }
+
+    for (int i = p0.x; i <= p1.x; i++) {
+        for (int j = p0.y; j <= p1.y; j++) {
+            if (out_of_limits((my_coords){i, j}, (my_coords){0, 0}, limits))
+                continue;
+            pixels[i + j*limits.x] = color;
+        }
+    }
+    // exit(0);
+}
+
+
+void drawLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLuint color) {
+    float y = 0.0f, pente;
+
+    int u = p1.x - p0.x, v = p1.y - p0.y;
+    pente = v / (float)u;
+
+    double add = 1.0;
+
+
+    //from left to right...
+    if (p0.x < p1.x) {
+
+        if (pente > add)
+            add /= pente;
+        else if (pente < -1*add)
+            add /= -1*pente;
+
+        for (double x = 0; x <= u; x+=add) {
+
+            int a = p0.y + (int)(y + 0.5f);
+            int b = (int)x + p0.x;
+            if (out_of_limits((my_coords){a, b}, (my_coords){0, 0}, limits)) break;
+            pixels[a * limits.x + b] = color;
+            y += pente*add;
+        }
+    }
+    //from right to left...
+    else {
+        
+        if (pente > add)
+            add /= pente;
+        else if (pente < -1*add)
+            add /= -1*pente;
+
+        for (double x = 0; x > u; x-=add) {
+
+            int a = p0.y + ((int)(y + 0.5f));
+            int b = (int)x + p0.x;
+            if (out_of_limits((my_coords){a, b}, (my_coords){0, 0}, limits)) break;
+            pixels[(a) * limits.x + b] = color;
+            y += pente*add;
+        }
+
+    }
+}
+
+
+void drawLine_fade(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1) {
+    float y = 0.0f, pente;
+
+    int u = p1.x - p0.x, v = p1.y - p0.y;
+    pente = v / (float)u;
+
+    double add = 1.0;
+
+    GLuint color = RGB(0, 0, 0);
+    float c = 0;
+    float minus = ((float)limits.x / 100)*2;
+    //from left to right...
+    if (p0.x < p1.x) {
+
+        if (pente > add)
+            add /= pente;
+        else if (pente < -1*add)
+            add /= -1*pente;
+
+        for (double x = 0; x <= u; x+=add) {
+            color = RGB(0, 0, (int)c);
+            if ( c < 255 -minus) c+=minus;
+
+            int a = p0.y + (int)(y + 0.5f);
+            int b = (int)x + p0.x;
+            if (out_of_limits((my_coords){a, b}, (my_coords){0, 0}, limits)) break;
+            pixels[a * limits.x + b] = color;
+            y += pente*add;
+        }
+    }
+    //from right to left...
+    else {
+        
+        if (pente > add)
+            add /= pente;
+        else if (pente < -1*add)
+            add /= -1*pente;
+
+        for (double x = 0; x > u; x-=add) {
+            color = RGB(0, (int)c, 0);
+            if ( c < 255 -minus) c+=minus;
+
+            int a = p0.y + ((int)(y + 0.5f));
+            int b = (int)x + p0.x;
+            if (out_of_limits((my_coords){a, b}, (my_coords){0, 0}, limits)) break;
+            pixels[(a) * limits.x + b] = color;
+            y += pente*add;
+        }
+
+    }
+}
+
+
+
+
+
+void drawRect_explosion(GLuint *pixels, my_coords limits) {
+    static GLuint color = RGB(0, 0, 0);
+    static int step = 0;
+    static my_coords center = {50, 50};
+    my_coords size = {50, 50};
+
+
+    // if (tick %5 == 1)
+        step++;
+    printf("step=%d, tick=%d\n", step, tick);
+    if (step >= 5 && tick == 1) {
+        center = (my_coords){rand()%limits.x, rand()%limits.x};
+        color = RGB(rand()%255, rand()%255, rand()%255);
+        step = 1;
+    }
+
+
+    //rect coordinates
+    static my_coords p0 = {0, 0};
+    // static my_coords p1 = {0, 0};
+    p0 = (my_coords) {center.x - size.x/2, center.y - size.y/2};
+    // p1 = (my_coords) {center.x + size.x/2, center.y + size.y/2};
+
+
+
+    for (int i = p0.x, j = p0.y, minus = 0; i <= center.x && j <= center.y; i++, j++, minus+=2) {
+        int skip = 1;
+        switch (step) {
+            case 1:
+                if (i < p0.x+20) skip = 0;
+                break;
+            case 2:
+                if (i < p0.x+15) skip = 0;
+                break;
+            case 3:
+                if (i < p0.x+10) skip = 0;
+                break;
+            case 4:
+                if (i < p0.x+5) skip = 0;
+                break;
+            
+            default:
+                printf("error in drawRect_explosion: \"step\" have an unwanted value (%d)\n", step);
+                break;
+        }
+        if (skip) continue;
+
+        //starting from up left (to right and down)
+        int x = i;
+        int y = j;
+        // drawPoint(pixels, (my_coords){x, y}, limits, color);
+        // drawLine(pixels, limits, (my_coords){x, y}, (my_coords){x, y+size.y-minus}, color);
+        // drawLine(pixels, limits, (my_coords){x, y}, (my_coords){x+size.x-minus, y}, color);
+        drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x, y+size.y-minus}, color);
+        drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x+size.x-minus, y}, color);
+        // starting from down right (to left and up)
+        x += size.x - minus;
+        y += size.y - minus; 
+        // drawPoint(pixels, (my_coords){x, y}, limits, color);
+        // drawLine(pixels, limits, (my_coords){x, y}, (my_coords){x, y-size.y+minus}, color);
+        // drawLine(pixels, limits, (my_coords){x, y}, (my_coords){x-size.x+minus, y}, color);
+        drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x, y-size.y+minus}, color);
+        drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x-size.x+minus, y}, color);
+    }
+
+    // for (int i = center.x, j = center.y, minus = 0; i <= p0.x && j <= p0.y; i--, j--, minus+=2) {
+    //     int skip = 1;
+    //     switch (step) {
+    //         case 1:
+    //             if (i < 20) skip = 0;
+    //             break;
+    //         case 2:
+    //             if (i < 15) skip = 0;
+    //             break;
+    //         case 3:
+    //             if (i < 10) skip = 0;
+    //             break;
+    //         case 4:
+    //             if (i < 5) skip = 0;
+    //             break;
+            
+    //         default:
+    //             printf("error in drawRect_explosion: \"step\" have an unwanted value (%d)\n", step);
+    //             break;
+    //     }
+    //     if (skip) continue;
+
+    //     //starting from up left (to right and down)
+    //     int x = i;
+    //     int y = j;
+    //     // drawPoint(pixels, (my_coords){x, y}, limits, color);
+    //     drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x, y+size.y-minus}, color);
+    //     drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x+size.x-minus, y}, color);
+    //     // starting from down right (to left and up)
+    //     x += size.x + minus;
+    //     y += size.y + minus; 
+    //     // drawPoint(pixels, (my_coords){x, y}, limits, color);
+    //     drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x, y-size.y+minus}, color);
+    //     drawStraightLine(pixels, limits, (my_coords){x, y}, (my_coords){x-size.x+minus, y}, color);
+    // }
+
+
+}
+
+
+float modulo (float val , float mod) {
+    while (val >= mod)  {val -= mod;}
+    return val;
+}
+
+void drawSpeed(GLuint *pixels, my_coords limits) {
+    //determine limits where speed comes from
+    my_coords sub_limits_p0 = {0, limits.y/3};
+    my_coords sub_limits_p1 = {limits.x, (limits.y/3)*2};
+
+    static my_coords center = {0, 0};
+
+    static int first_time = 1;
+    if (first_time) {
+        center = (my_coords) {rand()%(limits.x), sub_limits_p0.y + (rand()%(sub_limits_p1.y - sub_limits_p0.y))};
+        first_time = 0;
+    }
+    do {
+        center.x += (rand()%11)-5;
+    }
+    while (out_of_limits(center, sub_limits_p0, sub_limits_p1));
+    do {
+        center.y += (rand()%11)-5;
+    }
+    while (out_of_limits(center, sub_limits_p0, sub_limits_p1));
+
+    //taille des lignes
+    float rayon = sqrt(pow(limits.x, 2) + pow(limits.y, 2));
+    //distance du centre avant de dessiner les lignes
+    float dist_from_center = rayon/5;
+
+    for (float angle = 0.0f; angle < 2.0f * M_PI; angle += ((float)(1+ (rand()%5)))/10) {
+        //pour faire en sorte de "dessiner" un ovale autour du centre
+        if (modulo(angle, M_PI) < 0.5*M_PI) dist_from_center -= 3;
+        else dist_from_center += 3;
+
+
+        my_coords from = {center.x, center.y};
+        // my_coords from = {center.x + dist_from_center * cos(angle), center.y + dist_from_center * sin(angle)};
+        my_coords to = {center.x + rayon * cos(angle), center.y + rayon * sin(angle)};
+        drawLine_fade(pixels, limits, from, to);
+    }
+    drawPoint(pixels, center, limits, RGB(255, 0, 0));
+}
+
+
+
+
+
