@@ -1,6 +1,7 @@
 
 #include <GL4D/gl4dp.h>
 #include <GL4D/gl4duw_SDL2.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -8,6 +9,8 @@
 
 #define W 300
 #define H 300
+#define W_DIVIDER 2
+#define H_DIVIDER 2
 
 #define BPM 81
 #define TEMPO 4
@@ -17,6 +20,9 @@
 static int tempo = 0; //current moment of the tempo
 static int tick = 0; //current ticks of the beat
 
+static int height = 0;
+static Mix_Music *music = NULL;
+
 // static GLuint * pixels1 = NULL;
 
 
@@ -25,7 +31,7 @@ typedef struct coords_t {
     int y;
 } my_coords;
 
-
+static int _xm = 1, _ym = 1;
 
 
 
@@ -56,6 +62,16 @@ void drawRect_explosion(GLuint *pixels, my_coords limits);
 void drawSpeed(GLuint *pixels, my_coords limits);
 //appel les différentes animations selon un tracé prédéfini, pour être synchro avec la musique
 void draw(void);
+void up_height(void);
+
+//adjust rect coords to fits inside "limits"
+void adjust(my_coords *p0, my_coords *p1, my_coords limits);
+//modulo for float
+float modulo(float val , float mod);
+
+//met à jour "_xm" et "_ym", les coords du curseur sur la fenêtre
+void pmotion(int x, int y);
+
 
 
 
@@ -72,6 +88,8 @@ int main(int argc, char** argv) {
     gl4dpInitScreenWithDimensions(W/2, H/2);
     atexit(clean);
 
+    // music = Mix_LoadMUS("Pastless_remake.mp3");
+    // Mix_PlayMusic(music, 1);
 
     // int w = gl4dpGetWidth(), h = gl4dpGetHeight();
     // pixels1 = malloc(w*h * sizeof(GLuint));
@@ -79,8 +97,9 @@ int main(int argc, char** argv) {
     //place pixels
     gl4duwDisplayFunc(draw);
     //determine where to place pixels
-    // gl4duwIdleFunc(...);
+    gl4duwIdleFunc(up_height);
 
+    gl4duwPassiveMotionFunc(pmotion);
 
     gl4duwMainLoop();
     return 0;
@@ -98,6 +117,7 @@ int main(int argc, char** argv) {
 
 void draw(void) {
     SDL_Delay(BEAT_MS_DURATION / TICKS_BY_BEAT);
+    // SDL_Delay(250);
 
     //next tick/temp
     tick++;
@@ -128,7 +148,9 @@ void draw(void) {
     // if (phase >= 1 && phase < 3)
     //     drawRect_explosion(pixels, screen_size);
     // else if (phase >= 3 && phase < 5)
-        drawSpeed(pixels, screen_size);
+        // drawSpeed(pixels, screen_size);
+    
+    drawSpeed(pixels, screen_size);
 
 
 
@@ -153,6 +175,18 @@ void draw(void) {
 
 void clean(void) {
   gl4duClean(GL4DU_ALL);
+//   Mix_FreeMusic(music);
+}
+
+
+
+void pmotion(int x, int y) {
+    _xm = x / W_DIVIDER; 
+    _ym = (H - y) / H_DIVIDER;
+}
+
+void up_height(void) {
+    height = gl4dpGetHeight();
 }
 
 
@@ -296,17 +330,25 @@ void drawLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLui
 }
 
 
-void drawLine_fade(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1) {
+void intensify_color(int add, int *r0, int *g0, int *b0, int r1, int g1, int b1) {
+    if ( *r0 < r1 -add) *r0+=add;
+    if ( *g0 < g1 -add) *g0+=add;
+    if ( *b0 < b1 -add) *b0+=add;
+}
+
+void drawLine_fade(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, int r, int g, int b) {
     float y = 0.0f, pente;
 
     int u = p1.x - p0.x, v = p1.y - p0.y;
     pente = v / (float)u;
 
     double add = 1.0;
+    int r1 = 0, g1 = 0, b1 = 0;
+
 
     GLuint color = RGB(0, 0, 0);
     float c = 0;
-    float minus = ((float)limits.x / 100)*2;
+    float color_add = ((float)limits.x / 100)* (2+(rand()%20));
     //from left to right...
     if (p0.x < p1.x) {
 
@@ -316,8 +358,9 @@ void drawLine_fade(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1)
             add /= -1*pente;
 
         for (double x = 0; x <= u; x+=add) {
-            color = RGB(0, 0, (int)c);
-            if ( c < 255 -minus) c+=minus;
+            color = RGB(r1, g1, b1);
+            intensify_color(color_add, &r1, &g1, &b1, r, g, b);
+            // if ( c < 255 -color_add) c+=color_add;
 
             int a = p0.y + (int)(y + 0.5f);
             int b = (int)x + p0.x;
@@ -335,14 +378,15 @@ void drawLine_fade(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1)
             add /= -1*pente;
 
         for (double x = 0; x > u; x-=add) {
-            color = RGB(0, (int)c, 0);
-            if ( c < 255 -minus) c+=minus;
+            color = RGB(r1, g1, b1);
+            intensify_color(color_add, &r1, &g1, &b1, r, g, b);
+            if ( c < 255 -color_add) c+=color_add;
 
             int a = p0.y + ((int)(y + 0.5f));
             int b = (int)x + p0.x;
             if (out_of_limits((my_coords){a, b}, (my_coords){0, 0}, limits)) break;
             pixels[(a) * limits.x + b] = color;
-            y += pente*add;
+            y -= pente*add;
         }
 
     }
@@ -457,33 +501,81 @@ void drawRect_explosion(GLuint *pixels, my_coords limits) {
 }
 
 
-float modulo (float val , float mod) {
+float modulo(float val , float mod) {
     while (val >= mod)  {val -= mod;}
     return val;
 }
 
+
+void adjust(my_coords *p0, my_coords *p1, my_coords limits) {
+    //add stop conditions
+    //rect greater then limits
+
+    //x
+    if (p0->x < 0) {
+        int add = 0;
+        while (p0->x < 0) {
+            p0->x++; add++;
+        }
+        p1->x += add;
+    }
+    else if (p1->x >= limits.x) {
+        p0->x -= p1->x - limits.x + 1;
+        p1->x -= p1->x - limits.x + 1;
+    }
+
+    //y
+    if (p0->y < 0) {
+        int add = 0;
+        while (p0->y < 0) {
+            p0->y++; add++;
+        }
+        p1->y += add;
+    }
+    else if (p1->y >= limits.y) {
+        p0->y -= p1->y - limits.y + 1;
+        p1->y -= p1->y - limits.y + 1;
+    }
+}
+
+
+
+
 void drawSpeed(GLuint *pixels, my_coords limits) {
-    //determine limits where speed comes from
-    my_coords sub_limits_p0 = {0, limits.y/3};
-    my_coords sub_limits_p1 = {limits.x, (limits.y/3)*2};
+    //statics
+    static my_coords center = {0, 0}; //where the speed comes from
+    static int r = 255/2, g = 255/2, b = 255/2; //color for all lines
 
-    static my_coords center = {0, 0};
+    //rectangle autours du curseur
+    my_coords sub_limits_p0 = (my_coords){_xm - (limits.x/40), _ym - (limits.y/40)};
+    my_coords sub_limits_p1 = (my_coords){_xm + (limits.x/40), _ym + (limits.y/40)};
+    adjust(&sub_limits_p0, &sub_limits_p1, limits);
 
-    static int first_time = 1;
-    if (first_time) {
-        center = (my_coords) {rand()%(limits.x), sub_limits_p0.y + (rand()%(sub_limits_p1.y - sub_limits_p0.y))};
-        first_time = 0;
-    }
+    //up "center" to be inside sub_limits rect 
     do {
-        center.x += (rand()%11)-5;
+        center.x = sub_limits_p0.x + (rand()%(sub_limits_p1.x - sub_limits_p0.x));
+        center.y = sub_limits_p0.y + (rand()%(sub_limits_p1.y - sub_limits_p0.y));
     }
     while (out_of_limits(center, sub_limits_p0, sub_limits_p1));
-    do {
-        center.y += (rand()%11)-5;
-    }
-    while (out_of_limits(center, sub_limits_p0, sub_limits_p1));
+    // center = sub_limits_p1;
 
-    //taille des lignes
+    //randomly change lines color
+    int color_add = 50;
+    int temp = r;
+    do {
+        r = temp + ((color_add/2) - rand()%color_add);
+    } while (r < 100 || r > 255);
+    temp = g;
+    do {
+        g = temp + ((color_add/2) - rand()%color_add);
+    } while (g < 100 || g > 255);
+    temp = b;
+    do {
+        b = temp + ((color_add/2) - rand()%color_add);
+    } while (b < 100 || b > 255);
+
+
+    //taille des lignes (= diagonal of window size)
     float rayon = sqrt(pow(limits.x, 2) + pow(limits.y, 2));
     //distance du centre avant de dessiner les lignes
     float dist_from_center = rayon/5;
@@ -493,13 +585,14 @@ void drawSpeed(GLuint *pixels, my_coords limits) {
         if (modulo(angle, M_PI) < 0.5*M_PI) dist_from_center -= 3;
         else dist_from_center += 3;
 
-
-        my_coords from = {center.x, center.y};
-        // my_coords from = {center.x + dist_from_center * cos(angle), center.y + dist_from_center * sin(angle)};
+        //calcul des coordonnées de la ligne
+        my_coords from = {center.x + dist_from_center * cos(angle), center.y + dist_from_center * sin(angle)};
         my_coords to = {center.x + rayon * cos(angle), center.y + rayon * sin(angle)};
-        drawLine_fade(pixels, limits, from, to);
+
+        drawLine_fade(pixels, limits, from, to, r, g, b);
     }
-    drawPoint(pixels, center, limits, RGB(255, 0, 0));
+    //center indication
+    // drawPoint(pixels, center, limits, RGB(r, g, b));
 }
 
 

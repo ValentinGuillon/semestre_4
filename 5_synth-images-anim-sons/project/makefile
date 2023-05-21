@@ -50,13 +50,13 @@ CPPFLAGS += $(shell sdl2-config --cflags)
 LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs)
 # !!! DO NOT REMOVE !!! FIN
 
-PROG = problem
+PROG = project
 SOURCES = $(PROG).c
 OBJ = $(SOURCES:.c=.o)
 
 
 all: clean $(PROG) clean_soft
-	# ./$(PROG)
+	./$(PROG)
 
 
 # cible: dependance
@@ -71,7 +71,7 @@ $(PROG): $(OBJ)
 	$(HIDE)$(CC) $(OBJ) $(LDFLAGS) -o $(PROG) -lm
 	@echo "$(COLOR_OPEN)\"$@\" compiled.$(COLOR_CLOSE)"
 %.o: %.c
-	$(HIDE)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(HIDE)$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@ -lm
 
 
 
