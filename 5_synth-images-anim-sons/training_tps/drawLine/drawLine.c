@@ -12,31 +12,27 @@
 
 typedef struct coords_t {
     int x; int y;
-} coords;
+} my_coords;
 
 
-static void swap(coords *a, coords *b) {
-    coords temp = *a;
+static void swap(my_coords *a, my_coords *b) {
+    my_coords temp = *a;
     *a = *b;
     *b = temp;
 }
 
-static int out_of_limits(coords c1, coords c2) {
-    if (c1.x < 0 || c1.x >= W)
+static int out_of_limits(my_coords c) {
+    if (c.x < 0 || c.x >= W)
         return 1;
-    if (c2.x < 0 || c2.x >= W)
-        return 1;
-    if (c1.y < 0 || c1.y >= H)
-        return 1;
-    if (c2.y < 0 || c2.y >= H)
+    if (c.y < 0 || c.y >= H)
         return 1;
     return 0;
 }
 
 
 
-static void drawLine(unsigned char * image, int w, coords c1, coords c2, unsigned char color) {
-    if (out_of_limits(c1, c2))
+static void drawLine(unsigned char * image, int w, my_coords c1, my_coords c2, unsigned char color) {
+    if (out_of_limits(c1) || out_of_limits(c2))
         return;
 
     float y = 0.0f, pente;
@@ -70,13 +66,76 @@ static void drawLine(unsigned char * image, int w, coords c1, coords c2, unsigne
 }
 
 
+static void drawPoint(unsigned char * image, int w, my_coords c1, my_coords c2, unsigned char color) {
+    if (out_of_limits(c1) || out_of_limits(c2))
+        return;
+
+    float y = 0.0f, pente;
+
+    //on fait en sorte que le tracé se fasse toujours de gauche à droite
+    if (c2.x < c1.x)
+        swap(&c1, &c2);
+
+    int u = c2.x - c1.x, v = c2.y - c1.y;
+    pente = v / (float)u;
+
+    double add = 1.0;
+    if (pente > add)
+        add /= pente;
+    else if (pente < -1*add)
+        add /= -1*pente;
+
+    double x;
+    int first = 0;
+    //si, de gauche à droite, les y montent (diminue)
+    if (pente < 0) {
+        for (x = 0; x <= u; x+=add) {
+            if (!first) {
+                image[(c1.y + ((int)(y + 0.5f))) * w + (int)x + c1.x] = color;
+                first = 1;
+            }
+            // image[(c1.y + ((int)(y + 0.5f))) * w + (int)x + c1.x] = color;
+            y += pente*add;
+        }
+    }
+    else {
+        for (x = 0; x <= u; x+=add) {
+            if (!first) {
+                image[(c1.y + ((int)(y + 0.5f))) * w + (int)x + c1.x] = color;
+                first = 1;
+            }
+            // image[(c1.y + ((int)(y + 0.5f))) * w + (int)x + c1.x] = color;
+            y += pente*add;
+        }
+    }
+    image[(c1.y + ((int)(y + 0.5f))) * w + (int)x + c1.x] = color;
+}
 
 
 
-void drawCircle(unsigned char * image) {
-    printf("drawCircle() not writed !!!\n");
-    drawLine(image, W, (coords){5, 10}, (coords){70, 50}, 255);
+
+
+
+void drawCircle(unsigned char * image, my_coords center, float r) {
+    //rayon * rayon = (x - x0) * (x - x0) + (y - y0) * (y - y0);
+
+    for (float angle = 0.0f, rayon = r; angle < 2.0f * M_PI; angle += 0.1) {
+        // drawLine(image, W, (my_coords){W/2, H/2}, (my_coords){W/2 + rayon * cos(angle), H/2 + rayon * sin(angle)}, rand()%256);
+        // int x = (int)angle * (rayon + center.x);
+        // int y = (int)angle * (rayon + center.y) /*+0.5f*/  ;
+        // if (out_of_limits((my_coords){x, y}))
+        //     continue;
+        // image[x   +  (y*W)  ] = 255;
+        drawPoint(image, W, center, (my_coords){W/2 + rayon * cos(angle), H/2 + rayon * sin(angle)}, 255);
+    }
+    
+
     return;
+}
+
+int min(int x, int y) {
+    if (x <y ) return x;
+    return y; 
 }
 
 
@@ -90,22 +149,23 @@ int main(void) {
      * la couleur utilisée est le blanc (255)
      */
 
-    // drawLine(image, W, (coords){5, 10}, (coords){70, 50}, 255);
+    // drawLine(image, W, (my_coords){5, 10}, (my_coords){70, 50}, 255);
     // //exo 1
-    // drawLine(image, W, (coords){75, 10}, (coords){0, 50}, 255); //on échange ses coordonnées
+    // drawLine(image, W, (my_coords){75, 10}, (my_coords){0, 50}, 255); //on échange ses coordonnées
     // //exo 2
-    // drawLine(image, W, (coords){10, 10}, (coords){20, 50}, 255); //j'ai pas compris l'interêt de cette ligne
+    // drawLine(image, W, (my_coords){10, 10}, (my_coords){20, 50}, 255); //j'ai pas compris l'interêt de cette ligne
     // //exo 3
-    // drawLine(image, W, (coords){-10, -10}, (coords){120, 150}, 255); //on ne fait pas la fonction
+    // drawLine(image, W, (my_coords){-10, -10}, (my_coords){120, 150}, 255); //on ne fait pas la fonction
 
     // //exo 4
-    // for (float angle = 0.0f, rayon = 20.0f; angle < 2.0f * M_PI; angle += 0.5f)
-    //    drawLine(image, W, (coords){W/2, H/2}, (coords){W/2 + rayon * cos(angle), H/2 + rayon * sin(angle)}, rand()%256);
+    for (float angle = 0.0f, rayon = 20.0f; angle < 2.0f * M_PI; angle += 0.2f) {
+       drawPoint(image, W, (my_coords){W/2, H/2}, (my_coords){W/2 + rayon * cos(angle), H/2 + rayon * sin(angle)}, rand()%256);
+       drawLine(image, W, (my_coords){W/2, H/2}, (my_coords){W/2 + rayon * cos(angle), H/2 + rayon * sin(angle)}, rand()%256);
+    }
     
 
     //exo 5
-    drawCircle(image);
-    //rayon * rayon = (x - x0) * (x - x0) + (y - y0) * (y - y0);
+    // drawCircle(image,(my_coords){W/2, H/2}, 20);
 
 
     imageSaveBMP("resu.bmp", image, W, H, 1, 8);

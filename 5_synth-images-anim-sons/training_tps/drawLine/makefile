@@ -34,8 +34,8 @@ PROGS = drawLine
 
 
 all: clean $(PROGS) clean_soft
-	# ./drawLine
-	# xdg-open resu.bmp
+	./drawLine
+	xdg-open resu.bmp
 	@echo "$(COLOR_OPEN)drawCircle() not writed !!!$(COLOR_CLOSE)"
 
 
