@@ -11,7 +11,7 @@ SRC= src/
 INCLUDE= include/
 
 DISTNAME= $(COURS)_$(DEVOIR)_$(PROGRAMMER)
-FILESFORDIST= makefile *$(EXT)
+FILESFORDIST= makefile *$(EXT) Monocraft.otf Pastless_remake.mp3 README
 
 
 COLOR_CLOSE= \033[0m
@@ -47,7 +47,7 @@ else
 endif
 
 CPPFLAGS += $(shell sdl2-config --cflags)
-LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs)
+LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_mixer -lSDL2_ttf
 # !!! DO NOT REMOVE !!! FIN
 
 PROG = project
@@ -56,7 +56,7 @@ OBJ = $(SOURCES:.c=.o)
 
 
 all: clean $(PROG) clean_soft
-	./$(PROG)
+	# ./$(PROG)
 
 
 # cible: dependance

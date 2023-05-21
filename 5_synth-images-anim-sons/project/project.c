@@ -2,26 +2,29 @@
 #include <GL4D/gl4dp.h>
 #include <GL4D/gl4duw_SDL2.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 
-#define W 300
-#define H 300
+#define W 500
+#define H 500
 #define W_DIVIDER 2
 #define H_DIVIDER 2
 
 #define BPM 81
 #define TEMPO 4
-#define BEAT_MS_DURATION ((60000 / BPM) *TEMPO) / 4
-#define TICKS_BY_BEAT 10
+#define MUSIC_DURATION (58*TEMPO)
+#define BEAT_MS_DURATION (((60000 / BPM) *TEMPO) / 4)
+#define TICKS_BY_BEAT (3*TEMPO)
 
-static int tempo = 0; //current moment of the tempo
-static int tick = 0; //current ticks of the beat
+#define SOUND 1//1:ON, 0:OFF
 
-static int height = 0;
-static Mix_Music *music = NULL;
+static int _tempo = 1; //current moment of the tempo
+static int _tick = -8*TICKS_BY_BEAT; //current ticks of the beat
+
+static Mix_Music *_music = NULL;
 
 // static GLuint * pixels1 = NULL;
 
@@ -31,7 +34,7 @@ typedef struct coords_t {
     int y;
 } my_coords;
 
-static int _xm = 1, _ym = 1;
+static int _xmouse = 1, _ymouse = 1;
 
 
 
@@ -51,25 +54,25 @@ void drawPoint(GLuint *pixels, my_coords point, my_coords limits, GLuint color);
 void drawPoint_by_beat(GLuint *pixels, my_coords limits);
 //place un rectangle. La position et la color change tous les 4 beats
 void drawRect_by_4_beat(GLuint *pixels, my_coords limits);
-//place des pixels colorés de p0 à p1
+// place des pixels colorés de p0 à p1
 void drawLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLuint color);
 //place des pixels colorés de p0 à p1 (si la ligne pas strictement verticale ou horizontal, la fonction ne fait rien)
 void drawStraightLine(GLuint *pixels, my_coords limits, my_coords p0, my_coords p1, GLuint color);
 
+void draw_MusicProgressBar(GLuint *pixels, my_coords limits, int actual_tempo);
 //animation d'un rectangle dans une position et couleur aléatoire (chaque appel effectue rend un affichage différent en fonction selon l'étape de l'anim)
 void drawRect_explosion(GLuint *pixels, my_coords limits);
 //place des lignes dans tous les sens en partant d'un point définit (donne une illusion de vitesse)
 void drawSpeed(GLuint *pixels, my_coords limits);
 //appel les différentes animations selon un tracé prédéfini, pour être synchro avec la musique
 void draw(void);
-void up_height(void);
 
 //adjust rect coords to fits inside "limits"
 void adjust(my_coords *p0, my_coords *p1, my_coords limits);
 //modulo for float
 float modulo(float val , float mod);
 
-//met à jour "_xm" et "_ym", les coords du curseur sur la fenêtre
+//met à jour "_xmouse" et "_ymouse", les coords du curseur sur la fenêtre
 void pmotion(int x, int y);
 
 
@@ -88,8 +91,17 @@ int main(int argc, char** argv) {
     gl4dpInitScreenWithDimensions(W/2, H/2);
     atexit(clean);
 
-    // music = Mix_LoadMUS("Pastless_remake.mp3");
-    // Mix_PlayMusic(music, 1);
+    //mixer
+    if (SOUND) {
+        Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2024);
+        _music = Mix_LoadMUS("Pastless_remake.mp3");
+        Mix_PlayMusic(_music, 1);
+    }
+
+    // //ttf
+    // TTF_Init();
+    // TTF_Font *font = TTF_OpenFont("Monocraft.otf", 32);
+
 
     // int w = gl4dpGetWidth(), h = gl4dpGetHeight();
     // pixels1 = malloc(w*h * sizeof(GLuint));
@@ -97,7 +109,7 @@ int main(int argc, char** argv) {
     //place pixels
     gl4duwDisplayFunc(draw);
     //determine where to place pixels
-    gl4duwIdleFunc(up_height);
+    // gl4duwIdleFunc();
 
     gl4duwPassiveMotionFunc(pmotion);
 
@@ -111,26 +123,27 @@ int main(int argc, char** argv) {
 
 
 
-
-
-
-
 void draw(void) {
     SDL_Delay(BEAT_MS_DURATION / TICKS_BY_BEAT);
     // SDL_Delay(250);
 
+    //
+    static int actual_tempo = 0;
+
     //next tick/temp
-    tick++;
-    if (tick == TICKS_BY_BEAT+1) {
-        tick = 1;
-        tempo ++;
+    if (_tick == 0) actual_tempo = 1;
+    _tick++;
+    if (_tick == TICKS_BY_BEAT+1) {
+        _tick = 1;
+        _tempo ++;
+        actual_tempo++;
     }
-    if (tempo == TEMPO+1)
-        tempo = 1;
+    if (_tempo == TEMPO+1)
+        _tempo = 1;
 
 
     static int phase = 0;
-    if (tick == 1)
+    if (_tick == 1)
         phase++;
     if (phase == 5)
         phase = 1;
@@ -144,18 +157,30 @@ void draw(void) {
     GLuint * pixels = gl4dpGetPixels();
 
     //draw
-
-    // if (phase >= 1 && phase < 3)
-    //     drawRect_explosion(pixels, screen_size);
-    // else if (phase >= 3 && phase < 5)
-        // drawSpeed(pixels, screen_size);
-    
-    drawSpeed(pixels, screen_size);
+    int anim = 0;
+    printf("actual_tempo=%d\n", actual_tempo);
+    if (_tick < 1 || actual_tempo < 1 || actual_tempo > MUSIC_DURATION)
+        anim = 0;
+    else anim = 1;
 
 
 
-    // drawRect_by_4_beat(pixels, screen_size);
-    drawPoint_by_beat(pixels, screen_size);
+    draw_MusicProgressBar(pixels, screen_size, actual_tempo);
+    if (anim) {
+        if (phase % 2 == 1)
+            drawRect_explosion(pixels, screen_size);
+
+        drawSpeed(pixels, screen_size);
+
+
+        drawRect_by_4_beat(pixels, screen_size);
+        // drawPoint_by_beat(pixels, screen_size);
+    }
+    else
+        drawSpeed(pixels, screen_size);
+
+
+
 
 
     gl4dpUpdateScreen(NULL);
@@ -174,20 +199,17 @@ void draw(void) {
 
 
 void clean(void) {
-  gl4duClean(GL4DU_ALL);
-//   Mix_FreeMusic(music);
+    gl4duClean(GL4DU_ALL);
+    Mix_FreeMusic(_music);
 }
 
 
 
 void pmotion(int x, int y) {
-    _xm = x / W_DIVIDER; 
-    _ym = (H - y) / H_DIVIDER;
+    _xmouse = x / W_DIVIDER; 
+    _ymouse = (H - y) / H_DIVIDER;
 }
 
-void up_height(void) {
-    height = gl4dpGetHeight();
-}
 
 
 
@@ -232,10 +254,10 @@ void drawPoint_by_beat(GLuint *pixels, my_coords limits) {
     static my_coords point = {0, 0};
     static GLuint color = RGB(0, 0, 0);
 
-    if (tick == 1)
+    if (_tick == 1)
         point = (my_coords){rand() % limits.x, rand() % limits.y};
 
-    if (tick%5 == 1)
+    if (_tick%5 == 1)
         color = RGB(rand()%255, rand()%255, rand()%255);
     
     pixels[point.x + point.y*limits.x] = color;
@@ -247,7 +269,7 @@ void drawRect_by_4_beat(GLuint *pixels, my_coords limits) {
     static my_coords p1 = {0, 0};
 
 
-    if (tempo == 1 && tick == 1) {
+    if (_tempo == 1 && _tick == 1) {
         color = RGB(rand()%255, rand()%255, rand()%255);
 
         p0 = (my_coords){rand()% (limits.x/2), rand()% (limits.y/2)};
@@ -403,10 +425,10 @@ void drawRect_explosion(GLuint *pixels, my_coords limits) {
     my_coords size = {50, 50};
 
 
-    // if (tick %5 == 1)
+    if (_tick %(TICKS_BY_BEAT/4) == 1)
         step++;
-    printf("step=%d, tick=%d\n", step, tick);
-    if (step >= 5 && tick == 1) {
+    printf("step=%d, _tick=%d\n", step, _tick);
+    if (step >= 5 && _tick == 1) {
         center = (my_coords){rand()%limits.x, rand()%limits.x};
         color = RGB(rand()%255, rand()%255, rand()%255);
         step = 1;
@@ -547,8 +569,8 @@ void drawSpeed(GLuint *pixels, my_coords limits) {
     static int r = 255/2, g = 255/2, b = 255/2; //color for all lines
 
     //rectangle autours du curseur
-    my_coords sub_limits_p0 = (my_coords){_xm - (limits.x/40), _ym - (limits.y/40)};
-    my_coords sub_limits_p1 = (my_coords){_xm + (limits.x/40), _ym + (limits.y/40)};
+    my_coords sub_limits_p0 = (my_coords){_xmouse - (limits.x/40), _ymouse - (limits.y/40)};
+    my_coords sub_limits_p1 = (my_coords){_xmouse + (limits.x/40), _ymouse + (limits.y/40)};
     adjust(&sub_limits_p0, &sub_limits_p1, limits);
 
     //up "center" to be inside sub_limits rect 
@@ -595,6 +617,23 @@ void drawSpeed(GLuint *pixels, my_coords limits) {
     // drawPoint(pixels, center, limits, RGB(r, g, b));
 }
 
+
+
+
+void draw_MusicProgressBar(GLuint *pixels, my_coords limits, int actual_tempo) {
+    if (actual_tempo == 0) actual_tempo = 1;
+    // int musicPercent = (int)((float)100/MUSIC_DURATION) * actual_tempo;
+    int musicPercent = (actual_tempo) * ((float)100/(MUSIC_DURATION)) ;
+    printf("dur=%d\n", MUSIC_DURATION);
+
+    printf("musicPercent=%d\n", musicPercent);
+    int end = ((float)limits.x/100) * musicPercent;
+    printf("end=%d\n", end);
+
+    for (int y = 0; y < ((float)limits.y/100); y++)
+        drawLine(pixels, limits, (my_coords){0, y}, (my_coords){end, y}, RGB(255, 171, 0));
+
+}
 
 
 
